@@ -1,0 +1,38 @@
+=== T2 — Validación y pruebas unitarias de las reglas
+
+$ semgrep --validate --config php-sast-rules.yml
+If Semgrep missed a finding, please send us feedback to let us know!
+See https://semgrep.dev/docs/reporting-false-negatives/
+
+$ semgrep --test --config php-sast-rules.yml tests/php-sast-rules.php
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 1 file with 14 Code rules:
+  Scanning 1 file with 14 php rules.
+14/14: ✓ All tests passed
+No tests for fixes found.
+
+$ semgrep --test --config php-sast-rules-v2.yml tests/php-sast-rules-v2.php
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 1 file with 14 Code rules:
+  Scanning 1 file with 14 php rules.
+14/14: ✓ All tests passed
+No tests for fixes found.
+
+$ semgrep --test --config extra/php-extra-rules.yml extra/php-extra-rules.php
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 1 file with 2 Code rules:
+  Scanning 1 file with 2 php rules.
+2/2: ✓ All tests passed
+No tests for fixes found.

@@ -1,0 +1,3 @@
+[submodule "bWAPP"]
+	path = bWAPP
+	url = https://github.com/raesene/bWAPP.git

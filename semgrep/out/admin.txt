@@ -1,0 +1,20 @@
+                   
+                   
+┌─────────────────┐
+│ 2 Code Findings │
+└─────────────────┘
+                               
+    bWAPP/app/admin/phpinfo.php
+     ❱ src.semgrep.php-phpinfo-exposure
+          ❰❰ Blocking ❱❱
+          Divulgación de información (CWE-200): phpinfo() expone versión de PHP, módulos, rutas y variables de
+          entorno.                                                                                            
+                                                                                                              
+           19┆ phpinfo();
+                                
+    bWAPP/app/admin/settings.php
+    ❯❱ src.semgrep.php-hardcoded-credentials
+          ❰❰ Blocking ❱❱
+          Credencial embebida (CWE-798): contraseña o secreto escrito en el código fuente.
+                                                                                          
+           56┆ $password = "bug";

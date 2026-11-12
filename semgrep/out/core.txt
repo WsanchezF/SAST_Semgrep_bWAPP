@@ -1,0 +1,1180 @@
+                     
+                     
+┌───────────────────┐
+│ 207 Code Findings │
+└───────────────────┘
+                              
+    bWAPP/app/ba_forgotten.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           50┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+          112┆ $status = @mail($email, $subject, $content, "From: $sender");
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          151┆ $reset_code = hash("sha1", $reset_code, false);
+   
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+          167┆ $status = @mail($email, $subject, $content, "From: $sender");
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          188┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          301┆ echo $message;
+                                     
+    bWAPP/app/ba_insecure_login_1.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           34┆ header("Location: " . $bug[1]);
+                                     
+    bWAPP/app/ba_insecure_login_2.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           34┆ header("Location: " . $bug[1]);
+                                     
+    bWAPP/app/ba_insecure_login_3.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           34┆ header("Location: " . $bug[1]);
+                                  
+    bWAPP/app/ba_pwd_attacks_1.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           34┆ header("Location: " . $bug[1]);
+                                  
+    bWAPP/app/ba_pwd_attacks_2.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           35┆ header("Location: " . $bug[1]);
+                                  
+    bWAPP/app/ba_pwd_attacks_3.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           35┆ header("Location: " . $bug[1]);
+                                  
+    bWAPP/app/ba_pwd_attacks_4.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           34┆ header("Location: " . $bug[1]);
+                             
+    bWAPP/app/ba_weak_pwd.php
+    ❯❱ src.semgrep.php-hardcoded-credentials
+          ❰❰ Blocking ❱❱
+          Credencial embebida (CWE-798): contraseña o secreto escrito en el código fuente.
+                                                                                          
+           32┆ $password = "test";
+            ⋮┆----------------------------------------
+           37┆ $password = "test123";
+            ⋮┆----------------------------------------
+           42┆ $password = "Test123";
+            ⋮┆----------------------------------------
+           47┆ $password = "test";
+                       
+    bWAPP/app/bof_1.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          141┆ echo shell_exec("./apps/movie_search " . $title);
+   
+   ❯❯❱ src.semgrep.php-command-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección de comandos (CWE-78): una entrada del usuario llega a una función que ejecuta
+          comandos del sistema operativo.                                                                
+                                                                                                         
+          141┆ echo shell_exec("./apps/movie_search " . $title);
+                              
+    bWAPP/app/clickjacking.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          111┆ echo "<p>You ordered <b>" . $ticket_quantity . "</b> movie tickets. Total amount charged
+               from your account automatically: <b>" . $total_amount . " EUR</b>.</p>";                
+                          
+    bWAPP/app/commandi.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          140┆ echo "<p align=\"left\">" . shell_exec("nslookup  " . commandi($target)) . "</p>";
+   
+   ❯❯❱ src.semgrep.php-command-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección de comandos (CWE-78): una entrada del usuario llega a una función que ejecuta
+          comandos del sistema operativo.                                                                
+                                                                                                         
+          140┆ echo "<p align=\"left\">" . shell_exec("nslookup  " . commandi($target)) . "</p>";
+                                
+    bWAPP/app/commandi_blind.php
+   ❯❯❱ src.semgrep.php-command-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección de comandos (CWE-78): una entrada del usuario llega a una función que ejecuta
+          comandos del sistema operativo.                                                                
+                                                                                                         
+          149┆ shell_exec("ping -n 1 " . commandi($target));
+            ⋮┆----------------------------------------
+          160┆ shell_exec("ping -c 1 " . commandi($target));
+                               
+    bWAPP/app/cs_validation.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           96┆ $password_new = hash("sha1", $password_new, false);
+            ⋮┆----------------------------------------
+          100┆ $password_curr = hash("sha1", $password_curr, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          107┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          134┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          307┆ <?php echo $message;?>
+                        
+    bWAPP/app/csrf_1.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           55┆ $password_new = hash("sha1", $password_new, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           65┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           86┆ $password_curr = hash("sha1", $password_curr, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           93┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          120┆ $recordset = $link->query($sql);
+                        
+    bWAPP/app/csrf_2.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           53┆ $token = sha1(uniqid(mt_rand(0,100000)));
+                        
+    bWAPP/app/csrf_3.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           64┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          108┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          140┆ $token = sha1(uniqid(mt_rand(0,100000)));
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          213┆ <input type="hidden" name="login" value="<?php echo $login;?>">
+                                       
+    bWAPP/app/directory_traversal_1.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           35┆ header("Location: " . $bug[1]);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          254┆ echo $directory_traversal_error;
+            ⋮┆----------------------------------------
+          277┆ echo $directory_traversal_error;
+                                       
+    bWAPP/app/directory_traversal_2.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           35┆ header("Location: " . $bug[1]);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          255┆ echo $directory_traversal_error;
+            ⋮┆----------------------------------------
+          275┆ echo $directory_traversal_error;
+                              
+    bWAPP/app/hostheader_2.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           50┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           87┆ $reset_code = hash("sha1", $reset_code, false);
+   
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+          119┆ $status = @mail($email, $subject, $content, "From: $sender");
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          140┆ $recordset = $link->query($sql);
+                       
+    bWAPP/app/hpp-2.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          133┆ <?php echo $message ?>
+            ⋮┆----------------------------------------
+          189┆ <td align="center"> <a href=hpp-3.php?movie=<?php echo $row["id"]; ?>&name=<?php echo
+               hpp($name);?>&action=vote>Vote</a></td>                                              
+                       
+    bWAPP/app/hpp-3.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           49┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          149┆ <?php echo $message ?>
+                           
+    bWAPP/app/htmli_get.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          144┆ echo "Welcome " . htmli($firstname) . " " . htmli($lastname);
+                            
+    bWAPP/app/htmli_post.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          144┆ echo "Welcome " . htmli($firstname) . " " .  htmli($lastname);
+                              
+    bWAPP/app/htmli_stored.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           83┆ $recordset = $link->query($sql);
+                                         
+    bWAPP/app/http_response_splitting.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           31┆ header("Location: " . url_check_1($_GET["url"]));
+            ⋮┆----------------------------------------
+           43┆ header("Location: " . $_GET["url"]);
+                                     
+    bWAPP/app/http_verb_tampering.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           59┆ $password_new = hash("sha1", $password_new, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           79┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          140┆ $password_new = hash("sha1", $password_new, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          160┆ $recordset = $link->query($sql);
+                         
+    bWAPP/app/iframei.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          126┆ <iframe frameborder="0" src="robots.txt" height="<?php echo xss($_GET["ParamHeight"])?>"
+               width="<?php echo xss($_GET["ParamWidth"])?>"></iframe>                                 
+            ⋮┆----------------------------------------
+          126┆ <iframe frameborder="0" src="robots.txt" height="<?php echo xss($_GET["ParamHeight"])?>"
+               width="<?php echo xss($_GET["ParamWidth"])?>"></iframe>                                 
+            ⋮┆----------------------------------------
+          135┆ <iframe frameborder="0" src="<?php echo xss($_GET["ParamUrl"])?>" height="<?php echo
+               xss($_GET["ParamHeight"])?>" width="<?php echo xss($_GET["ParamWidth"])?>"></iframe>
+            ⋮┆----------------------------------------
+          135┆ <iframe frameborder="0" src="<?php echo xss($_GET["ParamUrl"])?>" height="<?php echo
+               xss($_GET["ParamHeight"])?>" width="<?php echo xss($_GET["ParamWidth"])?>"></iframe>
+            ⋮┆----------------------------------------
+          135┆ <iframe frameborder="0" src="<?php echo xss($_GET["ParamUrl"])?>" height="<?php echo
+               xss($_GET["ParamHeight"])?>" width="<?php echo xss($_GET["ParamWidth"])?>"></iframe>
+                                          
+    bWAPP/app/information_disclosure_1.php
+     ❱ src.semgrep.php-phpinfo-exposure
+          ❰❰ Blocking ❱❱
+          Divulgación de información (CWE-200): phpinfo() expone versión de PHP, módulos, rutas y variables de
+          entorno.                                                                                            
+                                                                                                              
+           30┆ phpinfo();
+            ⋮┆----------------------------------------
+           45┆ phpinfo();
+                                          
+    bWAPP/app/insecure_crypt_storage_1.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           70┆ localStorage.secret = "<?php if($_COOKIE["security_level"] != "1" and                  
+               $_COOKIE["security_level"] != "2"){echo $secret;} else{echo hash("sha1", $secret);}?>";
+                                          
+    bWAPP/app/insecure_crypt_storage_2.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           55┆ $password = sha1($password, false);
+            ⋮┆----------------------------------------
+           64┆ $salt = md5(uniqid());
+                                          
+    bWAPP/app/insecure_crypt_storage_3.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           48┆ $secret = sha1($secret);
+   
+    ❯❱ src.semgrep.php-weak-crypto
+          ❰❰ Blocking ❱❱
+          Criptografía débil (CWE-327): algoritmo obsoleto (mcrypt, DES, ECB, RC4) o codificación reversible
+          (base64) usada para proteger datos.                                                               
+                                                                                                            
+           55┆ $secret = base64_encode($secret);
+                                              
+    bWAPP/app/insecure_direct_object_ref_1.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           64┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          108┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          140┆ $token = sha1(uniqid(mt_rand(0,100000)));
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          213┆ <input type="hidden" name="login" value="<?php echo $login;?>">
+                                              
+    bWAPP/app/insecure_direct_object_ref_2.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          126┆ echo "<p>You ordered <b>" . $ticket_quantity . "</b> movie tickets.</p>";
+            ⋮┆----------------------------------------
+          127┆ echo "<p>Total amount charged from your account automatically: <b>" . $total_amount . "
+               EUR</b>.</p>";                                                                         
+                              
+    bWAPP/app/ldap_connect.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           35┆ header("Location: " . $bug[1]);
+   
+   ❯❯❱ src.semgrep.php-ldap-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección LDAP (CWE-90): una entrada del usuario se usa en un filtro de búsqueda LDAP sin
+          escapar.                                                                                         
+                                                                                                           
+          193┆ if(!($search=@ldap_search($ds, $dn, $filter)))
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          294┆ <td><font color="red">Welcome <?php if(isset($_SESSION["login"])){echo
+               ucwords($_SESSION["login"]);}?></font></td>                           
+            ⋮┆----------------------------------------
+          316┆ <input type="text" id="login" name="login" value="<?php echo                     
+               isset($_SESSION["ldap"]["login"])?$_SESSION["ldap"]["login"]:$login;?>" size="20"
+               autocomplete="off"></p>                                                          
+            ⋮┆----------------------------------------
+          319┆ <input type="password" id="password" name="password" value="<?php echo                 
+               isset($_SESSION["ldap"]["password"])?"":$password;?>" size="20" autocomplete="off"></p>
+            ⋮┆----------------------------------------
+          322┆ <input type="text" id="server" name="server" value="<?php echo                           
+               isset($_SESSION["ldap"]["server"])?$_SESSION["ldap"]["server"]:$server;?>" size="20"></p>
+            ⋮┆----------------------------------------
+          325┆ <input type="text" id="dn" name="dn" value="<?php echo                       
+               isset($_SESSION["ldap"]["dn"])?$_SESSION["ldap"]["dn"]:$dn;?>" size="20"></p>
+                       
+    bWAPP/app/ldapi.php
+   ❯❯❱ src.semgrep.php-ldap-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección LDAP (CWE-90): una entrada del usuario se usa en un filtro de búsqueda LDAP sin
+          escapar.                                                                                         
+                                                                                                           
+          271┆ $sr = ldap_search($ds, $dn, $filter, $ldap_fields_to_find);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          297┆ <td align="center"><?php echo $objectsid?></td>
+            ⋮┆----------------------------------------
+          298┆ <td><?php echo $samaccountname?></td>
+            ⋮┆----------------------------------------
+          299┆ <td><?php echo $userprincipalname?></td>
+            ⋮┆----------------------------------------
+          300┆ <td><?php echo $cn?></td>
+            ⋮┆----------------------------------------
+          301┆ <td><?php echo $givenname?></td>
+                       
+    bWAPP/app/login.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           34┆ $password = hash("sha1", $password, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           44┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           66┆ $token = sha1(uniqid(mt_rand(0,100000)));
+                       
+    bWAPP/app/maili.php
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+           86┆ $status = @mail($recipient, $subject, $content, "From: $email");
+                                 
+    bWAPP/app/password_change.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           55┆ $password_new = hash("sha1", $password_new, false);
+            ⋮┆----------------------------------------
+           59┆ $password_curr = hash("sha1", $password_curr, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           66┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+           93┆ $recordset = $link->query($sql);
+                          
+    bWAPP/app/php_eval.php
+   ❯❯❱ src.semgrep.php-code-injection-eval
+          ❰❰ Blocking ❱❱
+          Ejecución de código arbitrario (CWE-95): una entrada del usuario llega a
+          eval()/assert()/create_function(). Equivale a RCE.                      
+                                                                                  
+           82┆ @eval($_REQUEST["eval"]);
+                      
+    bWAPP/app/phpi.php
+   ❯❯❱ src.semgrep.php-code-injection-eval
+          ❰❰ Blocking ❱❱
+          Ejecución de código arbitrario (CWE-95): una entrada del usuario llega a
+          eval()/assert()/create_function(). Equivale a RCE.                      
+                                                                                  
+           90┆ <p><i><?php @eval ("echo " . $_REQUEST["message"] . ";");?></i></p>
+                         
+    bWAPP/app/phpinfo.php
+     ❱ src.semgrep.php-phpinfo-exposure
+          ❰❰ Blocking ❱❱
+          Divulgación de información (CWE-200): phpinfo() expone versión de PHP, módulos, rutas y variables de
+          entorno.                                                                                            
+                                                                                                              
+           19┆ phpinfo();
+                        
+    bWAPP/app/portal.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           33┆ header("Location: " . $bug[1]);
+                                        
+    bWAPP/app/restrict_folder_access.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           48┆ header("Content-Disposition: attachment; filename=" . basename($file));
+            ⋮┆----------------------------------------
+           53┆ header("Content-Length: " . filesize($file));
+                      
+    bWAPP/app/rlfi.php
+   ❯❯❱ src.semgrep.php-file-inclusion
+          ❰❰ Blocking ❱❱
+          Posible inclusión de archivos LFI/RFI (CWE-98): una entrada del usuario controla la ruta de
+          include/require.                                                                           
+                                                                                                     
+          167┆ if(in_array($language, $available_languages)) include($language);
+            ⋮┆----------------------------------------
+          174┆ include($language);
+                               
+    bWAPP/app/secret_change.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           40┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+           71┆ $recordset = $link->query($sql);
+                            
+    bWAPP/app/selections.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           32┆ header("Location: " . $bug[1]);
+                                        
+    bWAPP/app/smgmt_cookies_httponly.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          170┆ <td><?php echo $key;?></td>
+            ⋮┆----------------------------------------
+          171┆ <td><?php echo $cookie;?></td>
+                                      
+    bWAPP/app/smgmt_cookies_secure.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          178┆ <td><?php echo $key;?></td>
+            ⋮┆----------------------------------------
+          179┆ <td><?php echo $cookie;?></td>
+                                       
+    bWAPP/app/smgmt_strong_sessions.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          220┆ <td><?php echo $key;?></td>
+            ⋮┆----------------------------------------
+          221┆ <td><?php echo $cookie;?></td>
+                        
+    bWAPP/app/sqli_1.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          145┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          181┆ <td><?php echo $row["title"]; ?></td>
+            ⋮┆----------------------------------------
+          182┆ <td align="center"><?php echo $row["release_year"]; ?></td>
+            ⋮┆----------------------------------------
+          183┆ <td><?php echo $row["main_character"]; ?></td>
+            ⋮┆----------------------------------------
+          184┆ <td align="center"><?php echo $row["genre"]; ?></td>
+            ⋮┆----------------------------------------
+          185┆ <td align="center"><a href="http://www.imdb.com/title/<?php echo $row["imdb"]; ?>"
+               target="_blank">Link</a></td>                                                     
+                           
+    bWAPP/app/sqli_10-2.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           67┆ $recordset = mysql_query($sql, $link);
+                         
+    bWAPP/app/sqli_11.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          155┆ $recordset = $db->query($sql);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          182┆ <td><?php echo $row["title"]; ?></td>
+            ⋮┆----------------------------------------
+          183┆ <td align="center"><?php echo $row["release_year"]; ?></td>
+            ⋮┆----------------------------------------
+          184┆ <td><?php echo $row["main_character"]; ?></td>
+            ⋮┆----------------------------------------
+          185┆ <td align="center"><?php echo $row["genre"]; ?></td>
+            ⋮┆----------------------------------------
+          186┆ <td align="center"><a href="http://www.imdb.com/title/<?php echo $row["imdb"]; ?>"
+               target="_blank">Link</a></td>                                                     
+                         
+    bWAPP/app/sqli_13.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          177┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          213┆ <td><?php echo $row["title"]; ?></td>
+            ⋮┆----------------------------------------
+          214┆ <td align="center"><?php echo $row["release_year"]; ?></td>
+            ⋮┆----------------------------------------
+          215┆ <td><?php echo $row["main_character"]; ?></td>
+            ⋮┆----------------------------------------
+          216┆ <td align="center"><?php echo $row["genre"]; ?></td>
+            ⋮┆----------------------------------------
+          217┆ <td align="center"><a href="http://www.imdb.com/title/<?php echo $row["imdb"]; ?>"
+               target="_blank">Link</a></td>                                                     
+                         
+    bWAPP/app/sqli_14.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          140┆ $recordset = $db->query($sql);
+                         
+    bWAPP/app/sqli_15.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           67┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+          101┆ $status = @mail($email, $subject, $content, "From: $sender");
+                         
+    bWAPP/app/sqli_16.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          142┆ $password = hash("sha1", $password, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          148┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          184┆ echo $message;
+                        
+    bWAPP/app/sqli_2.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          177┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          213┆ <td><?php echo $row["title"]; ?></td>
+            ⋮┆----------------------------------------
+          214┆ <td align="center"><?php echo $row["release_year"]; ?></td>
+            ⋮┆----------------------------------------
+          215┆ <td><?php echo $row["main_character"]; ?></td>
+            ⋮┆----------------------------------------
+          216┆ <td align="center"><?php echo $row["genre"]; ?></td>
+            ⋮┆----------------------------------------
+          217┆ <td align="center"><a href="http://www.imdb.com/title/<?php echo $row["imdb"]; ?>"
+               target="_blank">Link</a></td>                                                     
+                        
+    bWAPP/app/sqli_3.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          144┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          180┆ echo $message;
+                        
+    bWAPP/app/sqli_4.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          133┆ $recordset = mysql_query($sql, $link);
+                        
+    bWAPP/app/sqli_5.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          161┆ echo "We have <b>" . $tickets_stock . "</b> movie tickets available in our stock.";
+                        
+    bWAPP/app/sqli_6.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          145┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          181┆ <td><?php echo $row["title"]; ?></td>
+            ⋮┆----------------------------------------
+          182┆ <td align="center"><?php echo $row["release_year"]; ?></td>
+            ⋮┆----------------------------------------
+          183┆ <td><?php echo $row["main_character"]; ?></td>
+            ⋮┆----------------------------------------
+          184┆ <td align="center"><?php echo $row["genre"]; ?></td>
+            ⋮┆----------------------------------------
+          185┆ <td align="center"><a href="http://www.imdb.com/title/<?php echo $row["imdb"]; ?>"
+               target="_blank">Link</a></td>                                                     
+                        
+    bWAPP/app/sqli_7.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          145┆ $recordset = $link->query($sql);
+                        
+    bWAPP/app/sqli_9.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          183┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          219┆ <td><?php echo $row["title"]; ?></td>
+            ⋮┆----------------------------------------
+          220┆ <td align="center"><?php echo $row["release_year"]; ?></td>
+            ⋮┆----------------------------------------
+          221┆ <td><?php echo $row["main_character"]; ?></td>
+            ⋮┆----------------------------------------
+          222┆ <td align="center"><?php echo $row["genre"]; ?></td>
+            ⋮┆----------------------------------------
+          223┆ <td align="center"><a href="http://www.imdb.com/title/<?php echo $row["imdb"]; ?>"
+               target="_blank">Link</a></td>                                                     
+                              
+    bWAPP/app/top_security.php
+    ❯❱ src.semgrep.php-hardcoded-credentials
+          ❰❰ Blocking ❱❱
+          Credencial embebida (CWE-798): contraseña o secreto escrito en el código fuente.
+                                                                                          
+           24┆ $secret = "PGk+PHA+U2VjdXJlIHRoZSB3b3JsZC4gRmlnaHQgY3JpbWUgYW5kIHNlbnNlbGVzcyB2aW9sZW5j";
+                                         
+    bWAPP/app/unvalidated_redir_fwd_1.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           82┆ header("Location: " . $_REQUEST["url"]);
+                                         
+    bWAPP/app/unvalidated_redir_fwd_2.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           39┆ header("Location: " . $_REQUEST["ReturnUrl"]);
+                                 
+    bWAPP/app/user_activation.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           37┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+           64┆ $recordset = $link->query($sql);
+                            
+    bWAPP/app/user_extra.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          101┆ $password = hash("sha1", $password, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          114┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          145┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          167┆ $activation_code = hash("sha1", $activation_code, false);
+   
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+          191┆ $status = @mail($email, $subject, $content, "From: $sender");
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          212┆ $recordset = $link->query($sql);
+                          
+    bWAPP/app/user_new.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           98┆ $password = hash("sha1", $password, false);
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          111┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          142┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          164┆ $activation_code = hash("sha1", $activation_code, false);
+   
+    ❯❱ src.semgrep.php-mail-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección en correo (CWE-93): una entrada del usuario llega a mail() y puede inyectar
+          cabeceras (CRLF: Bcc, Cc...).                                                                
+                                                                                                       
+          188┆ $status = @mail($email, $subject, $content, "From: $sender");
+   
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          209┆ $recordset = $link->query($sql);
+                        
+    bWAPP/app/xmli_1.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          237┆ echo $message;
+                        
+    bWAPP/app/xmli_2.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          185┆ <td align="center"><?php echo $key + 1?></td>
+            ⋮┆----------------------------------------
+          186┆ <td><?php echo $row;?></td>
+                              
+    bWAPP/app/xss_ajax_1-2.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+           79┆ echo xss($title) . "??? Sorry, we don't have that movie :(";
+                              
+    bWAPP/app/xss_ajax_2-2.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+           84┆ echo json_encode($movies);
+            ⋮┆----------------------------------------
+          105┆ echo '{"movies":[{"response":"' . $title . '??? Sorry, we don\'t have that movie :("}]}';
+                          
+    bWAPP/app/xss_eval.php
+    ❯❱ src.semgrep.php-open-redirect
+          ❰❰ Blocking ❱❱
+          Posible redirección abierta (CWE-601): una entrada del usuario determina el destino de
+          header("Location: ...").                                                              
+                                                                                                
+           35┆ header("Location: " . $bug[1]);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          240┆ eval("document.write(<?php echo xss($_GET["date"])?>)");
+            ⋮┆----------------------------------------
+          261┆ eval("document.write(<?php echo xss($_GET["date"])?>)");
+                         
+    bWAPP/app/xss_get.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          144┆ echo "Welcome " . xss($firstname) . " " . xss($lastname);
+                            
+    bWAPP/app/xss_href-2.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          133┆ <?php echo $message ?>
+            ⋮┆----------------------------------------
+          189┆ <td align="center"> <a href=xss_href-3.php?movie=<?php echo $row["id"]; ?>&name=<?php echo
+               hpp($name);?>&action=vote>Vote</a></td>                                                   
+                            
+    bWAPP/app/xss_href-3.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           49┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          149┆ <?php echo $message ?>
+                          
+    bWAPP/app/xss_json.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          131┆ var JSONResponseString = '<?php echo $string ?>';
+                           
+    bWAPP/app/xss_login.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+          144┆ $recordset = mysql_query($sql, $link);
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          180┆ echo $message;
+                              
+    bWAPP/app/xss_php_self.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          144┆ echo "Welcome " . xss($firstname) . " " . xss($lastname);
+                          
+    bWAPP/app/xss_post.php
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          144┆ echo "Welcome " . xss($firstname) . " " . xss($lastname);
+                              
+    bWAPP/app/xss_stored_1.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           83┆ $recordset = $link->query($sql);
+                              
+    bWAPP/app/xss_stored_3.php
+   ❯❯❱ src.semgrep.php-sql-injection
+          ❰❰ Blocking ❱❱
+          Posible inyección SQL (CWE-89): una entrada del usuario llega a una consulta SQL sin parametrizar.
+                                                                                                            
+           97┆ $recordset = $link->query($sql);
+            ⋮┆----------------------------------------
+          141┆ $recordset = $link->query($sql);
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          173┆ $token = sha1(uniqid(mt_rand(0,100000)));
+   
+    ❯❱ src.semgrep.php-reflected-xss
+          ❰❰ Blocking ❱❱
+          Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la respuesta HTML sin
+          codificar.                                                                                 
+                                                                                                     
+          246┆ <input type="hidden" name="login" value="<?php echo $login;?>">

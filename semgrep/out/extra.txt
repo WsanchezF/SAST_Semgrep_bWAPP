@@ -1,0 +1,81 @@
+                    
+                    
+┌──────────────────┐
+│ 15 Code Findings │
+└──────────────────┘
+                          
+    bWAPP/app/backdoor.php
+   ❯❯❱ src.semgrep.extra.php-unrestricted-file-upload
+          ❰❰ Blocking ❱❱
+          Subida de archivos sin restricción (CWE-434): el nombre o el directorio de destino de           
+          move_uploaded_file() lo controla el usuario; permite subir una webshell .php y ejecutarla (RCE).
+                                                                                                          
+            1┆ <?php if(isset($_REQUEST["upload"])){$dir=$_REQUEST["uploadDir"];if(phpversion()<'4.1.0'){$
+               file=$HTTP_POST_FILES["file"]["name"];@move_uploaded_file($HTTP_POST_FILES["file"]["tmp_nam
+               e"],$dir."/".$file) or die();}else{$file=$_FILES["file"]["name"];@move_uploaded_file($_FILE
+               S["file"]["tmp_name"],$dir."/".$file) or die();}@chmod($dir."/".$file,0755);echo "File     
+               uploaded";}else {echo "<form action=".$_SERVER["PHP_SELF"]." method=POST                   
+               enctype=multipart/form-data><input type=hidden name=MAX_FILE_SIZE value=1000000000><b>NSA  
+               file uploader</b><br><input name=file type=file><br>to directory: <input type=text         
+               name=uploadDir value=/var/www/bWAPP/images> <input type=submit name=upload                 
+               value=upload></form><img src=./images/nsa.jpg>";}?>                                        
+            ⋮┆----------------------------------------
+            1┆ <?php if(isset($_REQUEST["upload"])){$dir=$_REQUEST["uploadDir"];if(phpversion()<'4.1.0'){$
+               file=$HTTP_POST_FILES["file"]["name"];@move_uploaded_file($HTTP_POST_FILES["file"]["tmp_nam
+               e"],$dir."/".$file) or die();}else{$file=$_FILES["file"]["name"];@move_uploaded_file($_FILE
+               S["file"]["tmp_name"],$dir."/".$file) or die();}@chmod($dir."/".$file,0755);echo "File     
+               uploaded";}else {echo "<form action=".$_SERVER["PHP_SELF"]." method=POST                   
+               enctype=multipart/form-data><input type=hidden name=MAX_FILE_SIZE value=1000000000><b>NSA  
+               file uploader</b><br><input name=file type=file><br>to directory: <input type=text         
+               name=uploadDir value=/var/www/bWAPP/images> <input type=submit name=upload                 
+               value=upload></form><img src=./images/nsa.jpg>";}?>                                        
+                                       
+    bWAPP/app/directory_traversal_1.php
+   ❯❯❱ src.semgrep.extra.php-path-traversal
+          ❰❰ Blocking ❱❱
+          Posible path traversal (CWE-22): una entrada del usuario controla la ruta de un archivo o directorio
+          que se abre, lee, lista o borra (p. ej. ?page=../../../../etc/passwd).                              
+                                                                                                              
+          233┆ show_file($file);
+            ⋮┆----------------------------------------
+          247┆ show_file($file);
+            ⋮┆----------------------------------------
+          270┆ show_file($file);
+            ⋮┆----------------------------------------
+          288┆ show_file($file);
+                                       
+    bWAPP/app/directory_traversal_2.php
+   ❯❯❱ src.semgrep.extra.php-path-traversal
+          ❰❰ Blocking ❱❱
+          Posible path traversal (CWE-22): una entrada del usuario controla la ruta de un archivo o directorio
+          que se abre, lee, lista o borra (p. ej. ?page=../../../../etc/passwd).                              
+                                                                                                              
+          235┆ show_directory($directory);
+            ⋮┆----------------------------------------
+          248┆ show_directory($directory);
+            ⋮┆----------------------------------------
+          268┆ show_directory($directory);
+            ⋮┆----------------------------------------
+          283┆ show_directory($directory);
+                                        
+    bWAPP/app/restrict_folder_access.php
+   ❯❯❱ src.semgrep.extra.php-path-traversal
+          ❰❰ Blocking ❱❱
+          Posible path traversal (CWE-22): una entrada del usuario controla la ruta de un archivo o directorio
+          que se abre, lee, lista o borra (p. ej. ?page=../../../../etc/passwd).                              
+                                                                                                              
+           59┆ readfile($file) or die("Couldn't open $file.");
+                                          
+    bWAPP/app/unrestricted_file_upload.php
+   ❯❯❱ src.semgrep.extra.php-unrestricted-file-upload
+          ❰❰ Blocking ❱❱
+          Subida de archivos sin restricción (CWE-434): el nombre o el directorio de destino de           
+          move_uploaded_file() lo controla el usuario; permite subir una webshell .php y ejecutarla (RCE).
+                                                                                                          
+           34┆ move_uploaded_file($_FILES["file"]["tmp_name"], "images/" . $_FILES["file"]["name"]);
+            ⋮┆----------------------------------------
+           45┆ move_uploaded_file($_FILES["file"]["tmp_name"], "images/" . $_FILES["file"]["name"]);
+            ⋮┆----------------------------------------
+           58┆ move_uploaded_file($_FILES["file"]["tmp_name"], "images/" . $_FILES["file"]["name"]);
+            ⋮┆----------------------------------------
+           66┆ move_uploaded_file($_FILES["file"]["tmp_name"],"images/" . $_FILES["file"]["name"]);

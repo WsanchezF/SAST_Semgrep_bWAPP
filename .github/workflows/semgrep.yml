@@ -1,0 +1,105 @@
+# .github/workflows/semgrep.yml — SAST en CI con el ruleset del laboratorio
+#
+#  sast         : pruebas de reglas + escaneo de bWAPP (submódulo fijado a 53bcfdd)
+#                 y carga del SARIF en la pestaña Security (GitHub Code Scanning)
+#  quality-gate : falla si hay hallazgos de severidad Alta. En bWAPP falla a
+#                 propósito: demuestra que el pipeline bloquearía el despliegue.
+#  dashboard    : publica el reporte navegable (reporte/index.html) en GitHub Pages
+name: semgrep-sast
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  SEMGREP_VERSION: "1.185.0"
+
+jobs:
+  sast:
+    name: SAST con Semgrep (SARIF)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write          # subir SARIF a Code Scanning
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true            # trae bWAPP en el commit fijado
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Semgrep
+        run: pip install "semgrep==${SEMGREP_VERSION}"
+
+      - name: Pruebas unitarias de las reglas (14/14, 14/14, 2/2)
+        run: |
+          semgrep --test --config semgrep/php-sast-rules.yml    semgrep/tests/php-sast-rules.php    --metrics=off
+          semgrep --test --config semgrep/php-sast-rules-v2.yml semgrep/tests/php-sast-rules-v2.php --metrics=off
+          semgrep --test --config semgrep/extra/php-extra-rules.yml semgrep/extra/php-extra-rules.php --metrics=off
+
+      - name: Escaneo SAST de bWAPP (14 reglas + 2 extra)
+        run: |
+          semgrep scan --config semgrep/php-sast-rules.yml --config semgrep/extra/php-extra-rules.yml \
+            --metrics=off --no-git-ignore \
+            --sarif-output=semgrep.sarif --json-output=semgrep.json bWAPP/app
+
+      - name: Subir SARIF a GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep-php
+
+      - name: Guardar resultados como artefacto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-resultados
+          path: |
+            semgrep.sarif
+            semgrep.json
+
+  quality-gate:
+    name: Quality gate (0 hallazgos Alta)
+    runs-on: ubuntu-latest
+    needs: sast
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "semgrep==${SEMGREP_VERSION}"
+      - name: Bloquear si hay severidad ERROR (Alta)
+        run: semgrep scan --config semgrep/php-sast-rules.yml --severity ERROR --error --metrics=off --no-git-ignore bWAPP/app
+
+  dashboard:
+    name: Publicar dashboard en GitHub Pages
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar sitio
+        run: |
+          mkdir -p _site/charts
+          cp reporte/index.html reporte/Informe_SAST_bWAPP.pdf _site/
+          cp charts/*.png _site/charts/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

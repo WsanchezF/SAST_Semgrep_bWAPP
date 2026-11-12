@@ -1,0 +1,9 @@
+# entorno local
+.venv/
+__pycache__/
+*.pyc
+scratch/
+
+# salidas temporales de Edge / sistema
+Thumbs.db
+desktop.ini

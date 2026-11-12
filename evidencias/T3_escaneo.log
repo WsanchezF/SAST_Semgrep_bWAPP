@@ -1,0 +1,67 @@
+=== T3 — Escaneo de las 3 carpetas con php-sast-rules.yml (14 reglas)
+
+$ semgrep scan --config php-sast-rules.yml --metrics=off --disable-version-check --no-git-ignore --exclude admin --exclude soap bWAPP/app   # Proyecto 1 — Core
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 207 (207 blocking)
+ • Rules run: 14
+ • Targets scanned: 183
+ • Parsed lines: ~100.0%
+ • Scan skipped: 
+   ◦ Matching --exclude patterns: 2
+   ◦ Files larger than  files 1.0 MB: 1
+   ◦ Files matching .semgrepignore patterns: 1
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 14 rules on 183 files: 207 findings.
+
+$ semgrep scan --config php-sast-rules.yml --metrics=off --disable-version-check --no-git-ignore bWAPP/app/admin   # Proyecto 2 — admin
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 2 (2 blocking)
+ • Rules run: 14
+ • Targets scanned: 3
+ • Parsed lines: ~100.0%
+ • No ignore information available
+Ran 14 rules on 3 files: 2 findings.
+
+$ semgrep scan --config php-sast-rules.yml --metrics=off --disable-version-check --no-git-ignore bWAPP/app/soap   # Proyecto 3 — soap (NuSOAP)
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 21 (21 blocking)
+ • Rules run: 14
+ • Targets scanned: 12
+ • Parsed lines: ~100.0%
+ • No ignore information available
+Ran 14 rules on 12 files: 21 findings.
+
+$ semgrep scan --config php-sast-rules.yml --severity ERROR --exclude admin --exclude soap bWAPP/app   # solo Alta (Core)
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 58 (58 blocking)
+ • Rules run: 6
+ • Targets scanned: 183
+ • Parsed lines: ~100.0%
+ • Scan skipped: 
+   ◦ Matching --exclude patterns: 2
+   ◦ Files larger than  files 1.0 MB: 1
+   ◦ Files matching .semgrepignore patterns: 1
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 6 rules on 183 files: 58 findings.
+
+$ semgrep scan --config php-sast-rules.yml --sarif -o bwapp-all.sarif bWAPP/app   # SARIF combinado (CI/GitHub)
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 230 (230 blocking)
+ • Rules run: 14
+ • Targets scanned: 198
+ • Parsed lines: ~100.0%
+ • Scan skipped: 
+   ◦ Files larger than  files 1.0 MB: 1
+   ◦ Files matching .semgrepignore patterns: 1
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 14 rules on 198 files: 230 findings.

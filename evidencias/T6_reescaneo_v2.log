@@ -1,0 +1,34 @@
+=== T6 — Re-escaneo con el ruleset ajustado tras el triaje (php-sast-rules-v2.yml)
+
+$ semgrep scan --config php-sast-rules-v2.yml ... (core / admin / soap)
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 162 (162 blocking)
+ • Rules run: 14
+ • Targets scanned: 183
+ • Parsed lines: ~100.0%
+ • Scan skipped: 
+   ◦ Matching --exclude patterns: 2
+   ◦ Files larger than  files 1.0 MB: 1
+   ◦ Files matching .semgrepignore patterns: 1
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 14 rules on 183 files: 162 findings.
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 2 (2 blocking)
+ • Rules run: 14
+ • Targets scanned: 3
+ • Parsed lines: ~100.0%
+ • No ignore information available
+Ran 14 rules on 3 files: 2 findings.
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 7 (7 blocking)
+ • Rules run: 14
+ • Targets scanned: 12
+ • Parsed lines: ~100.0%
+ • No ignore information available
+Ran 14 rules on 12 files: 7 findings.

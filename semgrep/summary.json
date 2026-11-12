@@ -1,0 +1,1140 @@
+{
+  "generated": "2026-11-12T15:16:28",
+  "semgrep_version": "1.185.0",
+  "ruleset": "semgrep/php-sast-rules.yml (14 reglas)",
+  "repository": "https://github.com/raesene/bWAPP",
+  "totals": {
+    "findings": 230,
+    "files_scanned": 198,
+    "risk_index": 800,
+    "risk_per_file": 4.04,
+    "by_severity": {
+      "Alta": 59,
+      "Media": 167,
+      "Baja": 4
+    },
+    "taint_findings": 173,
+    "pattern_findings": 57
+  },
+  "per_project": {
+    "core": {
+      "name": "Core bWAPP",
+      "folder": "app/ (sin admin ni soap)",
+      "role": "Aplicación vulnerable principal",
+      "files": 183,
+      "errors": 0,
+      "version": "1.185.0",
+      "findings": 207,
+      "by_severity": {
+        "Alta": 58,
+        "Media": 146,
+        "Baja": 3
+      },
+      "by_class": {
+        "Reflected XSS": 89,
+        "SQL Injection": 48,
+        "Weak Hash": 25,
+        "Open Redirect": 19,
+        "Mail Header Injection": 7,
+        "Hardcoded Credentials": 5,
+        "Command Injection": 4,
+        "Information Disclosure (phpinfo)": 3,
+        "LDAP Injection": 2,
+        "Code Injection (eval)": 2,
+        "File Inclusion (LFI/RFI)": 2,
+        "Weak Crypto": 1
+      },
+      "risk_index": 731,
+      "posture": "Crítica"
+    },
+    "admin": {
+      "name": "admin",
+      "folder": "app/admin/",
+      "role": "Panel de administración",
+      "files": 3,
+      "errors": 0,
+      "version": "1.185.0",
+      "findings": 2,
+      "by_severity": {
+        "Alta": 0,
+        "Media": 1,
+        "Baja": 1
+      },
+      "by_class": {
+        "Hardcoded Credentials": 1,
+        "Information Disclosure (phpinfo)": 1
+      },
+      "risk_index": 4,
+      "posture": "Media"
+    },
+    "soap": {
+      "name": "soap (NuSOAP)",
+      "folder": "app/soap/",
+      "role": "Librería de servicios web (tercero)",
+      "files": 12,
+      "errors": 0,
+      "version": "1.185.0",
+      "findings": 21,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 20,
+        "Baja": 0
+      },
+      "by_class": {
+        "Weak Hash": 16,
+        "Weak Crypto": 4,
+        "Insecure Deserialization": 1
+      },
+      "risk_index": 65,
+      "posture": "Alta"
+    }
+  },
+  "by_owasp": {
+    "A03:2021 - Injection": 154,
+    "A02:2021 - Cryptographic Failures": 46,
+    "A01:2021 - Broken Access Control": 19,
+    "A07:2021 - Identification and Authentication Failures": 6,
+    "A05:2021 - Security Misconfiguration": 4,
+    "A08:2021 - Software and Data Integrity Failures": 1
+  },
+  "by_class": {
+    "Reflected XSS": 89,
+    "SQL Injection": 48,
+    "Weak Hash": 41,
+    "Open Redirect": 19,
+    "Mail Header Injection": 7,
+    "Hardcoded Credentials": 6,
+    "Weak Crypto": 5,
+    "Command Injection": 4,
+    "Information Disclosure (phpinfo)": 4,
+    "LDAP Injection": 2,
+    "Code Injection (eval)": 2,
+    "File Inclusion (LFI/RFI)": 2,
+    "Insecure Deserialization": 1
+  },
+  "by_rule": {
+    "php-reflected-xss": 89,
+    "php-sql-injection": 48,
+    "php-weak-hash": 41,
+    "php-open-redirect": 19,
+    "php-mail-injection": 7,
+    "php-hardcoded-credentials": 6,
+    "php-weak-crypto": 5,
+    "php-command-injection": 4,
+    "php-phpinfo-exposure": 4,
+    "php-ldap-injection": 2,
+    "php-code-injection-eval": 2,
+    "php-file-inclusion": 2,
+    "php-insecure-deserialization": 1
+  },
+  "by_cwe": {
+    "CWE-79: Cross-site Scripting": 89,
+    "CWE-89: SQL Injection": 48,
+    "CWE-328: Use of Weak Hash": 41,
+    "CWE-601: Open Redirect": 19,
+    "CWE-93: CRLF Injection": 7,
+    "CWE-798: Use of Hard-coded Credentials": 6,
+    "CWE-327: Broken or Risky Crypto Algorithm": 5,
+    "CWE-78: OS Command Injection": 4,
+    "CWE-200: Exposure of Sensitive Information": 4,
+    "CWE-90: LDAP Injection": 2,
+    "CWE-95: Eval Injection": 2,
+    "CWE-98: PHP Remote File Inclusion": 2,
+    "CWE-502: Deserialization of Untrusted Data": 1
+  },
+  "top_files_core": [
+    {
+      "file": "app/ldap_connect.php",
+      "total": 7,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 6,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/ba_forgotten.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 2,
+        "Media": 4,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/ldapi.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/sqli_1.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/sqli_11.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/sqli_13.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/sqli_2.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/sqli_6.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/sqli_9.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 1,
+        "Media": 5,
+        "Baja": 0
+      }
+    },
+    {
+      "file": "app/user_extra.php",
+      "total": 6,
+      "by_severity": {
+        "Alta": 3,
+        "Media": 3,
+        "Baja": 0
+      }
+    }
+  ],
+  "triage": {
+    "v1_total": 230,
+    "v2_total": 171,
+    "removed_total": 59,
+    "by_rule": [
+      {
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "v1": 89,
+        "v2": 53
+      },
+      {
+        "rule": "php-sql-injection",
+        "vuln_class": "SQL Injection",
+        "v1": 48,
+        "v2": 48
+      },
+      {
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "v1": 41,
+        "v2": 25
+      },
+      {
+        "rule": "php-open-redirect",
+        "vuln_class": "Open Redirect",
+        "v1": 19,
+        "v2": 17
+      },
+      {
+        "rule": "php-mail-injection",
+        "vuln_class": "Mail Header Injection",
+        "v1": 7,
+        "v2": 7
+      },
+      {
+        "rule": "php-hardcoded-credentials",
+        "vuln_class": "Hardcoded Credentials",
+        "v1": 6,
+        "v2": 6
+      },
+      {
+        "rule": "php-weak-crypto",
+        "vuln_class": "Weak Crypto",
+        "v1": 5,
+        "v2": 1
+      },
+      {
+        "rule": "php-command-injection",
+        "vuln_class": "Command Injection",
+        "v1": 4,
+        "v2": 4
+      },
+      {
+        "rule": "php-phpinfo-exposure",
+        "vuln_class": "Information Disclosure (phpinfo)",
+        "v1": 4,
+        "v2": 4
+      },
+      {
+        "rule": "php-ldap-injection",
+        "vuln_class": "LDAP Injection",
+        "v1": 2,
+        "v2": 2
+      },
+      {
+        "rule": "php-code-injection-eval",
+        "vuln_class": "Code Injection (eval)",
+        "v1": 2,
+        "v2": 2
+      },
+      {
+        "rule": "php-file-inclusion",
+        "vuln_class": "File Inclusion (LFI/RFI)",
+        "v1": 2,
+        "v2": 1
+      },
+      {
+        "rule": "php-insecure-deserialization",
+        "vuln_class": "Insecure Deserialization",
+        "v1": 1,
+        "v2": 1
+      }
+    ],
+    "removed": [
+      {
+        "id": "F-029",
+        "project": "core",
+        "rule": "php-file-inclusion",
+        "vuln_class": "File Inclusion (LFI/RFI)",
+        "severity": "Alta",
+        "file": "app/rlfi.php",
+        "line": 167,
+        "snippet": "if(in_array($language, $available_languages)) include($language);"
+      },
+      {
+        "id": "F-062",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/ba_forgotten.php",
+        "line": 301,
+        "snippet": "echo $message;"
+      },
+      {
+        "id": "F-082",
+        "project": "core",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/csrf_2.php",
+        "line": 53,
+        "snippet": "$token = sha1(uniqid(mt_rand(0,100000)));"
+      },
+      {
+        "id": "F-083",
+        "project": "core",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/csrf_3.php",
+        "line": 140,
+        "snippet": "$token = sha1(uniqid(mt_rand(0,100000)));"
+      },
+      {
+        "id": "F-095",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/hpp-3.php",
+        "line": 149,
+        "snippet": "<?php echo $message ?>"
+      },
+      {
+        "id": "F-109",
+        "project": "core",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/insecure_crypt_storage_2.php",
+        "line": 64,
+        "snippet": "$salt = md5(uniqid());"
+      },
+      {
+        "id": "F-112",
+        "project": "core",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/insecure_direct_object_ref_1.php",
+        "line": 140,
+        "snippet": "$token = sha1(uniqid(mt_rand(0,100000)));"
+      },
+      {
+        "id": "F-122",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/ldapi.php",
+        "line": 297,
+        "snippet": "<td align=\"center\"><?php echo $objectsid?></td>"
+      },
+      {
+        "id": "F-123",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/ldapi.php",
+        "line": 298,
+        "snippet": "<td><?php echo $samaccountname?></td>"
+      },
+      {
+        "id": "F-124",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/ldapi.php",
+        "line": 299,
+        "snippet": "<td><?php echo $userprincipalname?></td>"
+      },
+      {
+        "id": "F-125",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/ldapi.php",
+        "line": 300,
+        "snippet": "<td><?php echo $cn?></td>"
+      },
+      {
+        "id": "F-126",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/ldapi.php",
+        "line": 301,
+        "snippet": "<td><?php echo $givenname?></td>"
+      },
+      {
+        "id": "F-128",
+        "project": "core",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/login.php",
+        "line": 66,
+        "snippet": "$token = sha1(uniqid(mt_rand(0,100000)));"
+      },
+      {
+        "id": "F-133",
+        "project": "core",
+        "rule": "php-open-redirect",
+        "vuln_class": "Open Redirect",
+        "severity": "Media",
+        "file": "app/restrict_folder_access.php",
+        "line": 48,
+        "snippet": "header(\"Content-Disposition: attachment; filename=\" . basename($file));"
+      },
+      {
+        "id": "F-134",
+        "project": "core",
+        "rule": "php-open-redirect",
+        "vuln_class": "Open Redirect",
+        "severity": "Media",
+        "file": "app/restrict_folder_access.php",
+        "line": 53,
+        "snippet": "header(\"Content-Length: \" . filesize($file));"
+      },
+      {
+        "id": "F-142",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_1.php",
+        "line": 181,
+        "snippet": "<td><?php echo $row[\"title\"]; ?></td>"
+      },
+      {
+        "id": "F-143",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_1.php",
+        "line": 182,
+        "snippet": "<td align=\"center\"><?php echo $row[\"release_year\"]; ?></td>"
+      },
+      {
+        "id": "F-144",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_1.php",
+        "line": 183,
+        "snippet": "<td><?php echo $row[\"main_character\"]; ?></td>"
+      },
+      {
+        "id": "F-145",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_1.php",
+        "line": 184,
+        "snippet": "<td align=\"center\"><?php echo $row[\"genre\"]; ?></td>"
+      },
+      {
+        "id": "F-146",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_1.php",
+        "line": 185,
+        "snippet": "<td align=\"center\"><a href=\"http://www.imdb.com/title/<?php echo $row[\"imdb\"]; ?>\" target=\"_blank\">Link</a></td>"
+      },
+      {
+        "id": "F-152",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_13.php",
+        "line": 213,
+        "snippet": "<td><?php echo $row[\"title\"]; ?></td>"
+      },
+      {
+        "id": "F-153",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_13.php",
+        "line": 214,
+        "snippet": "<td align=\"center\"><?php echo $row[\"release_year\"]; ?></td>"
+      },
+      {
+        "id": "F-154",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_13.php",
+        "line": 215,
+        "snippet": "<td><?php echo $row[\"main_character\"]; ?></td>"
+      },
+      {
+        "id": "F-155",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_13.php",
+        "line": 216,
+        "snippet": "<td align=\"center\"><?php echo $row[\"genre\"]; ?></td>"
+      },
+      {
+        "id": "F-156",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_13.php",
+        "line": 217,
+        "snippet": "<td align=\"center\"><a href=\"http://www.imdb.com/title/<?php echo $row[\"imdb\"]; ?>\" target=\"_blank\">Link</a></td>"
+      },
+      {
+        "id": "F-159",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_16.php",
+        "line": 184,
+        "snippet": "echo $message;"
+      },
+      {
+        "id": "F-160",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_2.php",
+        "line": 213,
+        "snippet": "<td><?php echo $row[\"title\"]; ?></td>"
+      },
+      {
+        "id": "F-161",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_2.php",
+        "line": 214,
+        "snippet": "<td align=\"center\"><?php echo $row[\"release_year\"]; ?></td>"
+      },
+      {
+        "id": "F-162",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_2.php",
+        "line": 215,
+        "snippet": "<td><?php echo $row[\"main_character\"]; ?></td>"
+      },
+      {
+        "id": "F-163",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_2.php",
+        "line": 216,
+        "snippet": "<td align=\"center\"><?php echo $row[\"genre\"]; ?></td>"
+      },
+      {
+        "id": "F-164",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_2.php",
+        "line": 217,
+        "snippet": "<td align=\"center\"><a href=\"http://www.imdb.com/title/<?php echo $row[\"imdb\"]; ?>\" target=\"_blank\">Link</a></td>"
+      },
+      {
+        "id": "F-165",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_3.php",
+        "line": 180,
+        "snippet": "echo $message;"
+      },
+      {
+        "id": "F-167",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_6.php",
+        "line": 181,
+        "snippet": "<td><?php echo $row[\"title\"]; ?></td>"
+      },
+      {
+        "id": "F-168",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_6.php",
+        "line": 182,
+        "snippet": "<td align=\"center\"><?php echo $row[\"release_year\"]; ?></td>"
+      },
+      {
+        "id": "F-169",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_6.php",
+        "line": 183,
+        "snippet": "<td><?php echo $row[\"main_character\"]; ?></td>"
+      },
+      {
+        "id": "F-170",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_6.php",
+        "line": 184,
+        "snippet": "<td align=\"center\"><?php echo $row[\"genre\"]; ?></td>"
+      },
+      {
+        "id": "F-171",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_6.php",
+        "line": 185,
+        "snippet": "<td align=\"center\"><a href=\"http://www.imdb.com/title/<?php echo $row[\"imdb\"]; ?>\" target=\"_blank\">Link</a></td>"
+      },
+      {
+        "id": "F-172",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_9.php",
+        "line": 219,
+        "snippet": "<td><?php echo $row[\"title\"]; ?></td>"
+      },
+      {
+        "id": "F-173",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_9.php",
+        "line": 220,
+        "snippet": "<td align=\"center\"><?php echo $row[\"release_year\"]; ?></td>"
+      },
+      {
+        "id": "F-174",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_9.php",
+        "line": 221,
+        "snippet": "<td><?php echo $row[\"main_character\"]; ?></td>"
+      },
+      {
+        "id": "F-175",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_9.php",
+        "line": 222,
+        "snippet": "<td align=\"center\"><?php echo $row[\"genre\"]; ?></td>"
+      },
+      {
+        "id": "F-176",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/sqli_9.php",
+        "line": 223,
+        "snippet": "<td align=\"center\"><a href=\"http://www.imdb.com/title/<?php echo $row[\"imdb\"]; ?>\" target=\"_blank\">Link</a></td>"
+      },
+      {
+        "id": "F-198",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/xss_href-3.php",
+        "line": 149,
+        "snippet": "<?php echo $message ?>"
+      },
+      {
+        "id": "F-200",
+        "project": "core",
+        "rule": "php-reflected-xss",
+        "vuln_class": "Reflected XSS",
+        "severity": "Media",
+        "file": "app/xss_login.php",
+        "line": 180,
+        "snippet": "echo $message;"
+      },
+      {
+        "id": "F-203",
+        "project": "core",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/xss_stored_3.php",
+        "line": 173,
+        "snippet": "$token = sha1(uniqid(mt_rand(0,100000)));"
+      },
+      {
+        "id": "F-211",
+        "project": "soap",
+        "rule": "php-weak-crypto",
+        "vuln_class": "Weak Crypto",
+        "severity": "Media",
+        "file": "app/soap/class.soap_transport_http.php",
+        "line": 475,
+        "snippet": "$this->setHeader('Authorization', 'Basic '.base64_encode(str_replace(':','',$username).':'.$password));"
+      },
+      {
+        "id": "F-215",
+        "project": "soap",
+        "rule": "php-weak-crypto",
+        "vuln_class": "Weak Crypto",
+        "severity": "Media",
+        "file": "app/soap/class.soap_transport_http.php",
+        "line": 586,
+        "snippet": "$this->setHeader('Proxy-Authorization', ' Basic '.base64_encode($proxyusername.':'.$proxypassword));"
+      },
+      {
+        "id": "F-216",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 61,
+        "snippet": "return $this->cache_dir.'/wsdlcache-' . md5($wsdl);"
+      },
+      {
+        "id": "F-217",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 125,
+        "snippet": "if (isset($this->fplock[md5($filename)])) {"
+      },
+      {
+        "id": "F-218",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 129,
+        "snippet": "$this->fplock[md5($filename)] = fopen($filename.\".lock\", \"w\");"
+      },
+      {
+        "id": "F-219",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 131,
+        "snippet": "return flock($this->fplock[md5($filename)], LOCK_SH);"
+      },
+      {
+        "id": "F-220",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 133,
+        "snippet": "return flock($this->fplock[md5($filename)], LOCK_EX);"
+      },
+      {
+        "id": "F-221",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 173,
+        "snippet": "$ret = flock($this->fplock[md5($filename)], LOCK_UN);"
+      },
+      {
+        "id": "F-222",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 174,
+        "snippet": "fclose($this->fplock[md5($filename)]);"
+      },
+      {
+        "id": "F-223",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/class.wsdlcache.php",
+        "line": 175,
+        "snippet": "unset($this->fplock[md5($filename)]);"
+      },
+      {
+        "id": "F-224",
+        "project": "soap",
+        "rule": "php-weak-crypto",
+        "vuln_class": "Weak Crypto",
+        "severity": "Media",
+        "file": "app/soap/nusoap.php",
+        "line": 2629,
+        "snippet": "$this->setHeader('Authorization', 'Basic '.base64_encode(str_replace(':','',$username).':'.$password));"
+      },
+      {
+        "id": "F-228",
+        "project": "soap",
+        "rule": "php-weak-crypto",
+        "vuln_class": "Weak Crypto",
+        "severity": "Media",
+        "file": "app/soap/nusoap.php",
+        "line": 2740,
+        "snippet": "$this->setHeader('Proxy-Authorization', ' Basic '.base64_encode($proxyusername.':'.$proxypassword));"
+      },
+      {
+        "id": "F-229",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/nusoapmime.php",
+        "line": 90,
+        "snippet": "$cid = md5(uniqid(time()));"
+      },
+      {
+        "id": "F-230",
+        "project": "soap",
+        "rule": "php-weak-hash",
+        "vuln_class": "Weak Hash",
+        "severity": "Media",
+        "file": "app/soap/nusoapmime.php",
+        "line": 320,
+        "snippet": "$cid = md5(uniqid(time()));"
+      }
+    ]
+  },
+  "extra": {
+    "total": 15,
+    "by_rule": {
+      "Path Traversal": 9,
+      "Unrestricted File Upload": 6
+    },
+    "files": [
+      "app/backdoor.php",
+      "app/directory_traversal_1.php",
+      "app/directory_traversal_2.php",
+      "app/restrict_folder_access.php",
+      "app/unrestricted_file_upload.php"
+    ],
+    "findings": [
+      {
+        "id": "X-01",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_1.php",
+        "line": 233,
+        "col": 27,
+        "snippet": "show_file($file);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-02",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_1.php",
+        "line": 247,
+        "col": 31,
+        "snippet": "show_file($file);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-03",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_1.php",
+        "line": 270,
+        "col": 31,
+        "snippet": "show_file($file);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-04",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_1.php",
+        "line": 288,
+        "col": 27,
+        "snippet": "show_file($file);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-05",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_2.php",
+        "line": 235,
+        "col": 32,
+        "snippet": "show_directory($directory);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-06",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_2.php",
+        "line": 248,
+        "col": 36,
+        "snippet": "show_directory($directory);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-07",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_2.php",
+        "line": 268,
+        "col": 36,
+        "snippet": "show_directory($directory);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-08",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/directory_traversal_2.php",
+        "line": 283,
+        "col": 32,
+        "snippet": "show_directory($directory);",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-09",
+        "rule": "php-path-traversal",
+        "vuln_class": "Path Traversal",
+        "owasp": "A01:2021 - Broken Access Control",
+        "cwe": "CWE-22: Path Traversal",
+        "severity": "Alta",
+        "file": "app/restrict_folder_access.php",
+        "line": 59,
+        "col": 22,
+        "snippet": "readfile($file) or die(\"Couldn't open $file.\");",
+        "snippet_origin": "disco",
+        "remediation": "Lista blanca de nombres; si no, basename() + realpath() y verificar que la ruta resultante empiece por el directorio base permitido."
+      },
+      {
+        "id": "X-10",
+        "rule": "php-unrestricted-file-upload",
+        "vuln_class": "Unrestricted File Upload",
+        "owasp": "A04:2021 - Insecure Design",
+        "cwe": "CWE-434: Unrestricted Upload of File with Dangerous Type",
+        "severity": "Alta",
+        "file": "app/backdoor.php",
+        "line": 1,
+        "col": 187,
+        "snippet": "… HTTP_POST_FILES[\"file\"][\"name\"];@move_uploaded_file($HTTP_POST_FILES[\"file\"][\"tmp_name\"],$dir.\"/\".$file) or die();}else{$file=$_FILES[\"file\"][\"name\"];@move_uploaded_file($_FILES[\"file\"][\"tmp_name\"],$d …",
+        "snippet_origin": "disco",
+        "remediation": "Generar el nombre en el servidor (uniqid + extensión de lista blanca), validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso de ejecución."
+      },
+      {
+        "id": "X-11",
+        "rule": "php-unrestricted-file-upload",
+        "vuln_class": "Unrestricted File Upload",
+        "owasp": "A04:2021 - Insecure Design",
+        "cwe": "CWE-434: Unrestricted Upload of File with Dangerous Type",
+        "severity": "Alta",
+        "file": "app/backdoor.php",
+        "line": 1,
+        "col": 296,
+        "snippet": "… ie();}else{$file=$_FILES[\"file\"][\"name\"];@move_uploaded_file($_FILES[\"file\"][\"tmp_name\"],$dir.\"/\".$file) or die();}@chmod($dir.\"/\".$file,0755);echo \"File uploaded\";}else {echo \"<form action=\".$_SERVER …",
+        "snippet_origin": "disco",
+        "remediation": "Generar el nombre en el servidor (uniqid + extensión de lista blanca), validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso de ejecución."
+      },
+      {
+        "id": "X-12",
+        "rule": "php-unrestricted-file-upload",
+        "vuln_class": "Unrestricted File Upload",
+        "owasp": "A04:2021 - Insecure Design",
+        "cwe": "CWE-434: Unrestricted Upload of File with Dangerous Type",
+        "severity": "Alta",
+        "file": "app/unrestricted_file_upload.php",
+        "line": 34,
+        "col": 61,
+        "snippet": "move_uploaded_file($_FILES[\"file\"][\"tmp_name\"], \"images/\" . $_FILES[\"file\"][\"name\"]);",
+        "snippet_origin": "disco",
+        "remediation": "Generar el nombre en el servidor (uniqid + extensión de lista blanca), validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso de ejecución."
+      },
+      {
+        "id": "X-13",
+        "rule": "php-unrestricted-file-upload",
+        "vuln_class": "Unrestricted File Upload",
+        "owasp": "A04:2021 - Insecure Design",
+        "cwe": "CWE-434: Unrestricted Upload of File with Dangerous Type",
+        "severity": "Alta",
+        "file": "app/unrestricted_file_upload.php",
+        "line": 45,
+        "col": 65,
+        "snippet": "move_uploaded_file($_FILES[\"file\"][\"tmp_name\"], \"images/\" . $_FILES[\"file\"][\"name\"]);",
+        "snippet_origin": "disco",
+        "remediation": "Generar el nombre en el servidor (uniqid + extensión de lista blanca), validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso de ejecución."
+      },
+      {
+        "id": "X-14",
+        "rule": "php-unrestricted-file-upload",
+        "vuln_class": "Unrestricted File Upload",
+        "owasp": "A04:2021 - Insecure Design",
+        "cwe": "CWE-434: Unrestricted Upload of File with Dangerous Type",
+        "severity": "Alta",
+        "file": "app/unrestricted_file_upload.php",
+        "line": 58,
+        "col": 65,
+        "snippet": "move_uploaded_file($_FILES[\"file\"][\"tmp_name\"], \"images/\" . $_FILES[\"file\"][\"name\"]);",
+        "snippet_origin": "disco",
+        "remediation": "Generar el nombre en el servidor (uniqid + extensión de lista blanca), validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso de ejecución."
+      },
+      {
+        "id": "X-15",
+        "rule": "php-unrestricted-file-upload",
+        "vuln_class": "Unrestricted File Upload",
+        "owasp": "A04:2021 - Insecure Design",
+        "cwe": "CWE-434: Unrestricted Upload of File with Dangerous Type",
+        "severity": "Alta",
+        "file": "app/unrestricted_file_upload.php",
+        "line": 66,
+        "col": 60,
+        "snippet": "move_uploaded_file($_FILES[\"file\"][\"tmp_name\"],\"images/\" . $_FILES[\"file\"][\"name\"]);",
+        "snippet_origin": "disco",
+        "remediation": "Generar el nombre en el servidor (uniqid + extensión de lista blanca), validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso de ejecución."
+      }
+    ]
+  }
+}

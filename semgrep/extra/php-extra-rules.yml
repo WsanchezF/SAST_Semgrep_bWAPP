@@ -1,0 +1,82 @@
+# =============================================================================
+#  php-extra-rules.yml — Reglas taint NUEVAS (puntos extra)
+#  Detectan hallazgos que el ruleset base de 14 reglas NO cubre:
+#    15. php-path-traversal          CWE-22   A01:2021 Broken Access Control
+#    16. php-unrestricted-file-upload CWE-434 A04:2021 Insecure Design
+#  Nota didáctica: el motor taint de Semgrep CE es intraprocedural, por eso
+#  se modelan como sinks los envoltorios propios de bWAPP (show_file,
+#  show_directory) que internamente llaman a fopen()/opendir().
+# =============================================================================
+rules:
+
+  # ---------------------------------------------------------------------------
+  # 15. Path Traversal / lectura arbitraria de archivos  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-path-traversal
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Posible path traversal (CWE-22): una entrada del usuario controla la ruta
+      de un archivo o directorio que se abre, lee, lista o borra
+      (p. ej. ?page=../../../../etc/passwd).
+    metadata:
+      owasp: "A01:2021 - Broken Access Control"
+      cwe: "CWE-22: Path Traversal"
+      vuln_class: "Path Traversal"
+      remediation: >-
+        Lista blanca de nombres; si no, basename() + realpath() y verificar que
+        la ruta resultante empiece por el directorio base permitido.
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sanitizers:
+      - pattern: basename(...)
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern-inside: fopen($P, ...)
+              - pattern-inside: file_get_contents($P, ...)
+              - pattern-inside: readfile($P, ...)
+              - pattern-inside: file($P, ...)
+              - pattern-inside: opendir($P, ...)
+              - pattern-inside: scandir($P, ...)
+              - pattern-inside: unlink($P, ...)
+              - pattern-inside: copy($P, ...)
+              # envoltorios propios de bWAPP (fopen/opendir dentro)
+              - pattern-inside: show_file($P, ...)
+              - pattern-inside: show_directory($P, ...)
+          - pattern: $P
+
+  # ---------------------------------------------------------------------------
+  # 16. Subida de archivos sin restricción  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-unrestricted-file-upload
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Subida de archivos sin restricción (CWE-434): el nombre o el directorio
+      de destino de move_uploaded_file() lo controla el usuario; permite subir
+      una webshell .php y ejecutarla (RCE).
+    metadata:
+      owasp: "A04:2021 - Insecure Design"
+      cwe: "CWE-434: Unrestricted Upload of File with Dangerous Type"
+      vuln_class: "Unrestricted File Upload"
+      remediation: >-
+        Generar el nombre en el servidor (uniqid + extensión de lista blanca),
+        validar tipo MIME real (finfo), guardar fuera del webroot y sin permiso
+        de ejecución.
+    pattern-sources:
+      # el nombre del archivo lo elige el cliente; tmp_name lo genera PHP
+      - pattern: $_FILES[$K]["name"]
+      - pattern: $HTTP_POST_FILES[$K]["name"]
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+    pattern-sinks:
+      - patterns:
+          - pattern-inside: move_uploaded_file($TMP, $DEST)
+          - pattern: $DEST

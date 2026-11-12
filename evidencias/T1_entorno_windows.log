@@ -1,0 +1,45 @@
+﻿=== T1 - Entorno Windows - 2026-11-12 15:15:35
+SO: Microsoft Windows 11 Home Single Language (build 26300)
+
+> .venv\Scripts\python.exe --version
+Python 3.12.10
+
+> .venv\Scripts\semgrep.exe --version
+1.185.0
+
+> git --version
+git version 2.56.0.windows.4
+
+> docker --version
+Docker version 29.7.2, build a7dcaa6
+
+> git -C bWAPP log -1 --format="%H %cd"
+53bcfdd59c02dcfdbf79e218f0a99c54ff42d799 Wed Dec 1 20:53:34 2021 +0000
+
+> ls bWAPP/app   (primeras 20 entradas)
+admin
+apps
+db
+documents
+fonts
+images
+js
+passwords
+soap
+stylesheets
+666
+aim.php
+backdoor.php
+ba_captcha_bypass.php
+ba_forgotten.php
+ba_insecure_login.php
+ba_insecure_login_1.php
+ba_insecure_login_2.php
+ba_insecure_login_3.php
+ba_logout.php
+
+> archivos PHP en bWAPP/app: 197   (Core 182 / admin 3 / soap 12)
+> archivos PHP segun git (git ls-files app): 198
+> archivos PHP eliminados o bloqueados por el antivirus en Windows: 1
+     app/php_eval.php   (eliminado del disco por Windows Defender)
+> por eso el escaneo oficial se ejecuta dentro de Docker (ver T1_entorno_docker.log)

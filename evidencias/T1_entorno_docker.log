@@ -1,0 +1,61 @@
+=== T1 — Entorno (contenedor semgrep/semgrep:1.185.0) — 2026-11-12 20:26:53 UTC
+
+$ semgrep --version
+1.185.0
+
+$ git --version
+git version 2.52.0
+
+$ git clone --depth 1 https://github.com/raesene/bWAPP.git
+Cloning into 'bWAPP'...
+
+$ git -C bWAPP log -1 --format=%H %cd
+53bcfdd59c02dcfdbf79e218f0a99c54ff42d799 Wed Dec 1 20:53:34 2021 +0000
+
+$ ls bWAPP/app | head -20
+666
+admin
+aim.php
+apps
+ba_captcha_bypass.php
+ba_forgotten.php
+ba_insecure_login.php
+ba_insecure_login_1.php
+ba_insecure_login_2.php
+ba_insecure_login_3.php
+ba_logout.php
+ba_logout_1.php
+ba_pwd_attacks.php
+ba_pwd_attacks_1.php
+ba_pwd_attacks_2.php
+ba_pwd_attacks_3.php
+ba_pwd_attacks_4.php
+ba_weak_pwd.php
+backdoor.php
+bof_1.php
+
+$ find bWAPP/app -name '*.php' | wc -l
+198
+
+$ find bWAPP/app -name '*.php' -not -path '*/admin/*' -not -path '*/soap/*' | wc -l   # Core
+183
+
+$ ls bWAPP/app/admin bWAPP/app/soap
+bWAPP/app/admin:
+index.php
+phpinfo.php
+settings.php
+
+bWAPP/app/soap:
+class.nusoap_base.php
+class.soap_fault.php
+class.soap_parser.php
+class.soap_server.php
+class.soap_transport_http.php
+class.soap_val.php
+class.soapclient.php
+class.wsdl.php
+class.wsdlcache.php
+class.xmlschema.php
+nusoap.php
+nusoapmime.php

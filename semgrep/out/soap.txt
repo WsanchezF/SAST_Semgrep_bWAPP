@@ -1,0 +1,105 @@
+                    
+                    
+┌──────────────────┐
+│ 21 Code Findings │
+└──────────────────┘
+                                                
+    bWAPP/app/soap/class.soap_transport_http.php
+    ❯❱ src.semgrep.php-weak-crypto
+          ❰❰ Blocking ❱❱
+          Criptografía débil (CWE-327): algoritmo obsoleto (mcrypt, DES, ECB, RC4) o codificación reversible
+          (base64) usada para proteger datos.                                                               
+                                                                                                            
+          475┆ $this->setHeader('Authorization', 'Basic                      
+               '.base64_encode(str_replace(':','',$username).':'.$password));
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          486┆ $HA1 = md5($A1);
+            ⋮┆----------------------------------------
+          492┆ $HA2 =  md5($A2);
+            ⋮┆----------------------------------------
+          514┆ $hashedDigest = md5($unhashedDigest);
+   
+    ❯❱ src.semgrep.php-weak-crypto
+          ❰❰ Blocking ❱❱
+          Criptografía débil (CWE-327): algoritmo obsoleto (mcrypt, DES, ECB, RC4) o codificación reversible
+          (base64) usada para proteger datos.                                                               
+                                                                                                            
+          586┆ $this->setHeader('Proxy-Authorization', ' Basic     
+               '.base64_encode($proxyusername.':'.$proxypassword));
+                                      
+    bWAPP/app/soap/class.wsdlcache.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           61┆ return $this->cache_dir.'/wsdlcache-' . md5($wsdl);
+   
+   ❯❯❱ src.semgrep.php-insecure-deserialization
+          ❰❰ Blocking ❱❱
+          Deserialización insegura (CWE-502): unserialize() sobre datos no constantes permite inyección de
+          objetos PHP (POP chains).                                                                       
+                                                                                                          
+          109┆ return (!is_null($s)) ? unserialize($s) : null;
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          125┆ if (isset($this->fplock[md5($filename)])) {
+            ⋮┆----------------------------------------
+          129┆ $this->fplock[md5($filename)] = fopen($filename.".lock", "w");
+            ⋮┆----------------------------------------
+          131┆ return flock($this->fplock[md5($filename)], LOCK_SH);
+            ⋮┆----------------------------------------
+          133┆ return flock($this->fplock[md5($filename)], LOCK_EX);
+            ⋮┆----------------------------------------
+          173┆ $ret = flock($this->fplock[md5($filename)], LOCK_UN);
+            ⋮┆----------------------------------------
+          174┆ fclose($this->fplock[md5($filename)]);
+            ⋮┆----------------------------------------
+          175┆ unset($this->fplock[md5($filename)]);
+                             
+    bWAPP/app/soap/nusoap.php
+    ❯❱ src.semgrep.php-weak-crypto
+          ❰❰ Blocking ❱❱
+          Criptografía débil (CWE-327): algoritmo obsoleto (mcrypt, DES, ECB, RC4) o codificación reversible
+          (base64) usada para proteger datos.                                                               
+                                                                                                            
+          2629┆ $this->setHeader('Authorization', 'Basic                     
+               '.base64_encode(str_replace(':','',$username).':'.$password));
+   
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+          2640┆ $HA1 = md5($A1);
+            ⋮┆----------------------------------------
+          2646┆ $HA2 =  md5($A2);
+            ⋮┆----------------------------------------
+          2668┆ $hashedDigest = md5($unhashedDigest);
+   
+    ❯❱ src.semgrep.php-weak-crypto
+          ❰❰ Blocking ❱❱
+          Criptografía débil (CWE-327): algoritmo obsoleto (mcrypt, DES, ECB, RC4) o codificación reversible
+          (base64) usada para proteger datos.                                                               
+                                                                                                            
+          2740┆ $this->setHeader('Proxy-Authorization', ' Basic    
+               '.base64_encode($proxyusername.':'.$proxypassword));
+                                 
+    bWAPP/app/soap/nusoapmime.php
+    ❯❱ src.semgrep.php-weak-hash
+          ❰❰ Blocking ❱❱
+          Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni integridad (colisiones,
+          fuerza bruta rápida).                                                                          
+                                                                                                         
+           90┆ $cid = md5(uniqid(time()));
+            ⋮┆----------------------------------------
+          320┆ $cid = md5(uniqid(time()));

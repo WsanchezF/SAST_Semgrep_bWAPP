@@ -1,0 +1,743 @@
+<title>Informe SAST bWAPP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Evaluación SAST con Semgrep del código fuente de bWAPP: hallazgos, gráficas, triaje y postura de seguridad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: informe técnico de una columna (máx. 1180px) con barra de secciones fija;
+   resumen y semáforo primero, detalle después. Color de estado solo para severidad/postura. */
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --surface-2: #edf0f4;
+  --ink: #111820;
+  --ink-2: #485260;
+  --muted: #737d8c;
+  --line: #dde2e9;
+  --accent: #1d5bb8;
+  --accent-soft: #e5edf9;
+  --code-bg: #f2f4f7;
+  --code-ink: #1b2430;
+  --hl: #fff0bf;
+  --add: #e3f4e3;
+  --s-alta: #d03b3b;   --s-alta-ink: #b02a2a;  --s-alta-soft: #fbeaea;
+  --s-media: #ec835a;  --s-media-ink: #a94f26; --s-media-soft: #fdf0e9;
+  --s-baja: #fab219;   --s-baja-ink: #855c00;  --s-baja-soft: #fff5d9;
+  --ok: #0ca30c;       --ok-ink: #006300;      --ok-soft: #e5f4e5;
+  --series-1: #2a78d6; --series-2: #eb6834;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "IBM Plex Sans Condensed", "IBM Plex Sans", "Segoe UI", Arial Narrow, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --radius: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1116; --surface: #151b22; --surface-2: #1c232c; --ink: #e6ebf1; --ink-2: #b2bcc8;
+    --muted: #8691a0; --line: #2a333e; --accent: #73a9ff; --accent-soft: #1b2a42;
+    --code-bg: #10151c; --code-ink: #d8e0ea; --hl: #3b3317; --add: #183118;
+    --s-alta-ink: #ff8f8f; --s-alta-soft: #3a1d1d; --s-media-ink: #f4a582; --s-media-soft: #3a261a;
+    --s-baja-ink: #f6c453; --s-baja-soft: #3a3115; --ok-ink: #52c552; --ok-soft: #163016;
+    --series-1: #3987e5; --series-2: #d95926;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1116; --surface: #151b22; --surface-2: #1c232c; --ink: #e6ebf1; --ink-2: #b2bcc8;
+  --muted: #8691a0; --line: #2a333e; --accent: #73a9ff; --accent-soft: #1b2a42;
+  --code-bg: #10151c; --code-ink: #d8e0ea; --hl: #3b3317; --add: #183118;
+  --s-alta-ink: #ff8f8f; --s-alta-soft: #3a1d1d; --s-media-ink: #f4a582; --s-media-soft: #3a261a;
+  --s-baja-ink: #f6c453; --s-baja-soft: #3a3115; --ok-ink: #52c552; --ok-soft: #163016;
+  --series-1: #3987e5; --series-2: #d95926;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-body); margin: 0; }
+a { color: var(--accent); }
+code, pre, .mono { font-family: var(--font-mono); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h2 { font-size: 1.75rem; font-weight: 700; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.prose { max-width: 70ch; color: var(--ink-2); }
+.eyebrow { font: 600 .72rem/1.2 var(--font-body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ---------- cabecera ---------- */
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top .wrap { padding-block: 28px 22px; display: grid; gap: 14px; }
+header.top h1 { font-size: clamp(1.9rem, 4.2vw, 2.8rem); font-weight: 700; letter-spacing: -.01em; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--ink-2); font-size: .9rem; }
+.meta b { color: var(--ink); font-weight: 600; }
+.verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 12px 14px; border-radius: var(--radius);
+  background: var(--s-alta-soft); color: var(--ink); border: 1px solid color-mix(in srgb, var(--s-alta) 35%, transparent); }
+.verdict .p { font-weight: 600; }
+
+/* ---------- navegación ---------- */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+nav.sec { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+nav.sec .wrap { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+nav.sec a { flex: none; padding: 11px 12px; color: var(--ink-2); text-decoration: none; font-size: .9rem; border-bottom: 2px solid transparent; }
+nav.sec a .t { color: var(--muted); font: 500 .72rem var(--font-mono); margin-left: 4px; }
+nav.sec a:hover { color: var(--ink); }
+nav.sec a.on { color: var(--ink); border-bottom-color: var(--accent); }
+nav.sec a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+main section { padding-block: 44px 8px; scroll-margin-top: 56px; }
+.sec-head { display: grid; gap: 6px; margin-bottom: 20px; }
+.sec-head .eyebrow b { color: var(--accent); font-weight: 600; }
+.stack { display: grid; gap: 18px; align-content: start; }
+.stack, .sec-head, .proj, .kf, header.top .wrap { grid-template-columns: minmax(0, 1fr); }
+.stack > *, .kf > *, details > .in { min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+/* ---------- KPIs ---------- */
+.kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.kpi { background: var(--surface); padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.kpi .v { font: 700 2rem/1 var(--font-display); }
+.kpi .l { font-size: .82rem; color: var(--ink-2); }
+.kpi .v .u { font-size: .95rem; font-weight: 500; color: var(--muted); margin-left: 3px; }
+.kpi.alta .v { color: var(--s-alta-ink); } .kpi.media .v { color: var(--s-media-ink); } .kpi.baja .v { color: var(--s-baja-ink); }
+@media (max-width: 960px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- pills ---------- */
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px 2px 7px; border-radius: 999px; font-size: .78rem; font-weight: 600; white-space: nowrap; line-height: 1.6; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: currentColor; flex: none; }
+.pill.Alta, .pill.Crítica { background: var(--s-alta-soft); color: var(--s-alta-ink); }
+.pill.Media { background: var(--s-media-soft); color: var(--s-media-ink); }
+.pill.Baja { background: var(--s-baja-soft); color: var(--s-baja-ink); }
+.pill.ok { background: var(--ok-soft); color: var(--ok-ink); }
+.pill.na { background: var(--surface-2); color: var(--ink-2); }
+.pill.post { font-size: .85rem; padding: 4px 12px 4px 9px; }
+.pill.post.Alta { background: var(--s-media-soft); color: var(--s-media-ink); }
+.pill.post.Media { background: var(--s-baja-soft); color: var(--s-baja-ink); }
+.pill.post.Baja { background: var(--ok-soft); color: var(--ok-ink); }
+.pill.post::before { width: 10px; height: 10px; border-radius: 50%; }
+.tag { font: 500 .74rem var(--font-mono); color: var(--ink-2); background: var(--surface-2); border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+
+/* ---------- proyectos (semáforo) ---------- */
+.proj { display: grid; gap: 12px; align-content: start; }
+.proj .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.proj .n { font: 700 1.6rem var(--font-display); }
+.proj dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 14px; margin: 0; font-size: .88rem; }
+.proj dt { color: var(--muted); } .proj dd { margin: 0; }
+.proj.Crítica { box-shadow: inset 4px 0 0 var(--s-alta); }
+.proj.Alta { box-shadow: inset 4px 0 0 var(--s-media); }
+.proj.Media { box-shadow: inset 4px 0 0 var(--s-baja); }
+
+/* ---------- gráficas HTML ---------- */
+.chart h3 { margin-bottom: 2px; }
+.chart .sub { font-size: .85rem; color: var(--muted); margin-bottom: 14px; }
+.bars { display: grid; grid-template-columns: fit-content(40%) minmax(0, 1fr); gap: 9px 12px; align-items: center; }
+.bars .lab { font-size: .86rem; color: var(--ink); text-align: right; min-width: 0; overflow-wrap: anywhere; }
+.bars .lab small { display: block; color: var(--muted); font-size: .74rem; }
+.track { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bar { display: flex; gap: 2px; height: 14px; min-width: 2px; }
+.seg { height: 100%; min-width: 2px; }
+.seg:last-child { border-radius: 0 4px 4px 0; }
+.seg.Alta { background: var(--s-alta); } .seg.Media { background: var(--s-media); } .seg.Baja { background: var(--s-baja); }
+.seg.s1 { background: var(--series-1); } .seg.s2 { background: var(--series-2); }
+.val { font-size: .82rem; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.val .pct { color: var(--muted); margin-left: 4px; }
+.gbar { display: grid; gap: 3px; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .8rem; color: var(--ink-2); margin-top: 14px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.axisnote { font-size: .76rem; color: var(--muted); margin-top: 10px; }
+#tip { position: fixed; z-index: 20; pointer-events: none; background: var(--ink); color: var(--bg); font-size: .8rem; padding: 6px 9px; border-radius: 6px; max-width: 280px; opacity: 0; transition: opacity .08s; }
+#tip.on { opacity: 1; }
+
+/* ---------- tablas ---------- */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--ink-2); background: var(--surface-2); font-size: .78rem; letter-spacing: .02em; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td code { font-size: .8rem; }
+.snip { font: .78rem/1.45 var(--font-mono); color: var(--code-ink); max-width: 46ch; overflow-wrap: anywhere; }
+
+/* ---------- código ---------- */
+.code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; overflow-x: auto; font: .8rem/1.6 var(--font-mono); color: var(--code-ink); }
+.code .ln { display: grid; grid-template-columns: 3.4em 1fr; min-width: 100%; width: max-content; }
+.code .ln > span:first-child { color: var(--muted); text-align: right; padding-right: 12px; user-select: none; }
+.code .ln > span:last-child { white-space: pre; padding-right: 14px; }
+.nowrap { white-space: nowrap; }
+#tri-table td.snip { min-width: 24ch; }
+.code .ln.hl { background: var(--hl); }
+.code .ln.add { background: var(--add); }
+.code.plain { padding: 10px 12px; white-space: pre; }
+.code .c { color: var(--muted); }
+.code .k { color: var(--accent); }
+
+/* ---------- hallazgos destacados ---------- */
+.kf { display: grid; gap: 12px; }
+.kf-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.kf-head h3 { flex: 1 1 260px; }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font: .78rem var(--font-mono); }
+.flow span { background: var(--surface-2); padding: 2px 7px; border-radius: 4px; }
+.flow span:first-child { background: var(--s-alta-soft); color: var(--s-alta-ink); }
+.flow span:last-child { background: var(--accent-soft); color: var(--accent); }
+.flow b { color: var(--muted); font-weight: 400; }
+.kf .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .kf .two { grid-template-columns: 1fr; } }
+.kf .lbl { font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.kf p { font-size: .9rem; color: var(--ink-2); }
+
+/* ---------- explorador ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: end; margin-bottom: 10px; }
+.filters label { display: grid; gap: 3px; font-size: .74rem; color: var(--muted); font-weight: 600; }
+.filters select, .filters input { font: .86rem var(--font-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-width: 0; }
+.filters input[type=search] { width: min(260px, 100%); }
+.filters .count { margin-left: auto; font-size: .82rem; color: var(--ink-2); }
+#explorer .tbl-wrap { max-height: 600px; overflow: auto; }
+#explorer thead th { position: sticky; top: 0; z-index: 1; }
+
+details { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+details > summary { cursor: pointer; padding: 11px 14px; font-weight: 600; font-size: .9rem; list-style: none; display: flex; gap: 8px; align-items: center; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸"; color: var(--muted); transition: transform .15s; }
+details[open] > summary::before { transform: rotate(90deg); }
+details > .in { padding: 0 14px 14px; }
+details pre.log { margin: 0; max-height: 460px; overflow: auto; background: var(--code-bg); border-radius: 6px; padding: 12px; font: .76rem/1.5 var(--font-mono); color: var(--code-ink); white-space: pre; }
+
+ol.prio { margin: 0; padding-left: 1.3em; display: grid; gap: 10px; }
+ol.prio li::marker { font-weight: 700; color: var(--accent); }
+ol.prio b { font-weight: 600; }
+.formula { font: 500 1rem var(--font-mono); background: var(--surface-2); border-radius: 6px; padding: 10px 12px; overflow-x: auto; white-space: nowrap; }
+footer { padding-block: 40px 56px; color: var(--muted); font-size: .82rem; }
+.cover { display: none; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+
+/* ---------- impresión / PDF ---------- */
+@media print {
+  @page { size: A4; margin: 14mm 12mm; }
+  :root { --bg: #fff; }
+  body { font-size: 11px; }
+  nav.sec, .filters, #tip, body::before { display: none !important; }
+  .cover { display: grid; min-height: 255mm; align-content: center; gap: 18px; page-break-after: always; text-align: left; }
+  .cover h1 { font-size: 30px; } .cover .u { font-size: 15px; font-weight: 600; }
+  header.top { border: 0; }
+  main section { padding-block: 18px 0; page-break-before: always; }
+  main section#resumen { page-break-before: auto; }
+  .card, .kf, details, .tbl-wrap, .kpis { break-inside: avoid; }
+  #explorer .tbl-wrap { max-height: none; overflow: visible; }
+  #explorer table { font-size: 8.5px; } #explorer .snip { max-width: 60ch; }
+  details pre.log { max-height: none; overflow: visible; white-space: pre-wrap; }
+  .code { overflow: visible; } .code .ln { width: auto; } .code .ln > span:last-child { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .kpis { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .kpi { padding: 10px; } .kpi .v { font-size: 1.6rem; }
+  .proj .row { flex-wrap: wrap; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+<!--BODY-->
+<div class="cover">
+  <div class="eyebrow">{{university}} · Facultad de Ingeniería en Sistemas de Información y Ciencias de la Computación</div>
+  <div class="u">{{program}} · {{course}}</div>
+  <h1>Guía y práctica de SAST con Semgrep: análisis del código de bWAPP</h1>
+  <p>Informe de la evaluación SAST de los 3 proyectos del repositorio raesene/bWAPP (T1–T8).</p>
+  <p><b>Estudiante:</b> {{author}}<br><b>Fecha:</b> {{date}}</p>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">{{course}} · {{program}} · {{university}}</div>
+    <h1>Análisis SAST de bWAPP con Semgrep</h1>
+    <div class="meta">
+      <span><b>{{author}}</b></span>
+      <span>{{date}}</span>
+      <span>Semgrep <b>{{version}}</b></span>
+      <span>Ruleset local de <b>14 reglas</b> (+2 extra)</span>
+      <span>raesene/bWAPP @ <code>{{commit}}</code></span>
+    </div>
+    <div class="verdict" role="note">
+      <span class="pill post Crítica">Postura global: Crítica</span>
+      <span class="p">{{total}} hallazgos en {{files}} archivos PHP · {{alta}} de severidad Alta · índice de riesgo {{risk}}</span>
+    </div>
+  </div>
+</header>
+
+<nav class="sec" aria-label="Secciones del informe">
+  <div class="wrap">
+    <a href="#resumen">Resumen</a>
+    <a href="#graficas">Gráficas<span class="t">T4</span></a>
+    <a href="#hallazgos">Hallazgos<span class="t">T3·T5</span></a>
+    <a href="#triaje">Triaje<span class="t">T6</span></a>
+    <a href="#postura">Postura<span class="t">T7</span></a>
+    <a href="#reglas">Reglas<span class="t">T2·extra</span></a>
+    <a href="#evidencia">Evidencia<span class="t">T1·T8</span></a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- =================================================================== RESUMEN -->
+<section id="resumen">
+  <div class="sec-head">
+    <div class="eyebrow">Resumen ejecutivo</div>
+    <h2>bWAPP no pasaría ningún control de despliegue</h2>
+  </div>
+  <div class="stack">
+    <div class="kpis">
+      <div class="kpi"><span class="v tnum">{{total}}</span><span class="l">hallazgos en {{files}} archivos PHP</span></div>
+      <div class="kpi alta"><span class="v">{{alta}}</span><span class="l">severidad Alta ({{alta_pct}} %)</span></div>
+      <div class="kpi media"><span class="v">{{media}}</span><span class="l">severidad Media</span></div>
+      <div class="kpi baja"><span class="v">{{baja}}</span><span class="l">severidad Baja</span></div>
+      <div class="kpi"><span class="v">{{risk}}</span><span class="l">índice de riesgo ({{risk_pf}} por archivo)</span></div>
+      <div class="kpi"><span class="v">{{v2}}</span><span class="l">tras triaje ({{removed}} falsos positivos o reclasificados)</span></div>
+    </div>
+    <div class="grid3" id="proj-cards"></div>
+    <div class="card stack" style="gap:10px">
+      <div class="eyebrow">Lectura ejecutiva</div>
+      <p class="prose">La aplicación está en estado <b>crítico</b>, como corresponde a un entorno de entrenamiento. Predomina
+        <b>A03 Injection</b> ({{a03}} de {{total}} hallazgos, {{a03_pct}} %), con {{sqli}} inyecciones SQL y
+        <b>{{rce}} caminos directos a ejecución remota de código</b> (eval, shell_exec, include y subida de archivos).
+        En una aplicación real estos hallazgos bloquearían el despliegue. El Core concentra {{core_n}} de los {{total}}
+        hallazgos; NuSOAP aporta riesgo de componente de terceros sin mantenimiento y el panel admin expone credenciales
+        estáticas y phpinfo(). Prioridades: parametrizar el SQL, eliminar las rutas a RCE, codificar la salida HTML y
+        sustituir MD5/SHA-1 por password_hash().</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== GRÁFICAS -->
+<section id="graficas">
+  <div class="sec-head">
+    <div class="eyebrow"><b>T4</b> · Gráficas generadas desde el JSON</div>
+    <h2>Dónde se concentra el riesgo</h2>
+    <p class="prose">Las barras se dibujan desde <code>semgrep/summary.json</code>, que produce <code>semgrep/analyze.py</code> al agregar los
+      tres JSON de Semgrep. Las mismas gráficas están en PNG en la carpeta <code>charts/</code>. Pase el cursor por una barra para ver el detalle.</p>
+  </div>
+  <div class="grid2">
+    <div class="card chart"><h3>Hallazgos por proyecto y severidad</h3><div class="sub">{{total}} hallazgos en {{files}} archivos PHP</div><div id="ch-proj"></div></div>
+    <div class="card chart"><h3>Distribución por severidad</h3><div class="sub">Índice = Alta×5 + Media×3 + Baja×1 = {{risk}}</div><div id="ch-sev"></div></div>
+    <div class="card chart"><h3>Por categoría OWASP Top 10 (2021)</h3><div class="sub">Las 3 carpetas combinadas</div><div id="ch-owasp"></div></div>
+    <div class="card chart"><h3>Por tipo de vulnerabilidad</h3><div class="sub">Una barra por regla del ruleset</div><div id="ch-class"></div></div>
+  </div>
+  <div class="card chart" style="margin-top:18px"><h3>Top 10 archivos con más hallazgos (Core)</h3><div class="sub">Candidatos a revisión y corrección inmediata</div><div id="ch-files"></div></div>
+</section>
+
+<!-- =================================================================== HALLAZGOS -->
+<section id="hallazgos">
+  <div class="sec-head">
+    <div class="eyebrow"><b>T3</b> · Escaneo de las 3 carpetas</div>
+    <h2>Resultados por proyecto</h2>
+  </div>
+  <div class="tbl-wrap"><table id="t3"></table></div>
+  <p class="axisnote">Escaneo oficial dentro de Docker (<code>semgrep/semgrep:{{version}}</code>) para analizar los {{files}} archivos. En Windows,
+    el antivirus pone en cuarentena <code>app/php_eval.php</code>; el escaneo nativo de control da exactamente un hallazgo menos (ver Evidencia).
+    Filtrando solo severidad ERROR en el Core quedan {{core_alta}} hallazgos.</p>
+
+  <div class="sec-head" style="margin-top:40px">
+    <div class="eyebrow"><b>T5</b> · Hallazgos documentados</div>
+    <h2>Ocho hallazgos con código y remediación</h2>
+    <p class="prose">Cinco del Core (los que pide la guía) y uno de cada clase restante relevante, incluidos admin y soap. La línea resaltada es la que reporta Semgrep.</p>
+  </div>
+  <div class="stack" id="key-findings"></div>
+
+  <div class="sec-head" style="margin-top:40px" id="explorer-head">
+    <div class="eyebrow">Explorador</div>
+    <h2>Los {{total}} hallazgos</h2>
+  </div>
+  <div id="explorer">
+    <div class="filters">
+      <label for="f-proj">Proyecto<select id="f-proj"></select></label>
+      <label for="f-sev">Severidad<select id="f-sev"></select></label>
+      <label for="f-class">Tipo<select id="f-class"></select></label>
+      <label for="f-tri">Triaje v2<select id="f-tri"><option value="">Todos</option><option value="se mantiene">Se mantiene</option><option value="descartado">Descartado / reclasificado</option></select></label>
+      <label for="f-q">Buscar<input id="f-q" type="search" placeholder="archivo, código, CWE…"></label>
+      <span class="count" id="f-count" aria-live="polite"></span>
+    </div>
+    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Severidad</th><th>Tipo</th><th>Archivo:línea</th><th>Fragmento</th><th>OWASP · CWE</th><th>v2</th></tr></thead><tbody id="f-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- =================================================================== TRIAJE -->
+<section id="triaje">
+  <div class="sec-head">
+    <div class="eyebrow"><b>T6</b> · Triaje de falsos positivos</div>
+    <h2>Todo hallazgo SAST se revisa antes de reportarlo</h2>
+    <p class="prose">Se revisaron a mano las coincidencias de cada regla. Los casos dudosos se convirtieron en pruebas unitarias
+      (<code>semgrep/tests/php-sast-rules-v2.php</code>) y se ajustaron 5 reglas en <code>php-sast-rules-v2.yml</code>. Re-escaneando:
+      <b>{{total}} → {{v2}}</b> hallazgos, sin perder ningún verdadero positivo de las pruebas.</p>
+  </div>
+  <div class="stack">
+    <div class="card kf" id="fp1"></div>
+    <div class="tbl-wrap"><table id="tri-table"></table></div>
+    <div class="card chart"><h3>Efecto del triaje en las reglas ajustadas</h3><div class="sub">Hallazgos por regla, v1 (original) frente a v2 (tras triaje)</div><div id="ch-tri"></div></div>
+    <details><summary>Ver los {{removed}} hallazgos que v2 descarta o reclasifica</summary><div class="in"><div class="tbl-wrap"><table id="removed"></table></div></div></details>
+    <div class="card stack" style="gap:8px">
+      <div class="eyebrow">Revisados y confirmados</div>
+      <p class="prose">No todo lo dudoso es falso positivo. <b>insecure_crypt_storage_3.php:55</b> usa base64 para “proteger” un secreto: es un
+        verdadero positivo de cripto débil y v2 lo conserva. El MD5 de HTTP Digest en NuSOAP (RFC 2617) se mantiene como riesgo aceptado del
+        protocolo. La deserialización de la caché WSDL se mantiene: depende de los permisos del directorio de caché y no se puede descartar desde el código.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== POSTURA -->
+<section id="postura">
+  <div class="sec-head">
+    <div class="eyebrow"><b>T7</b> · Postura de seguridad</div>
+    <h2>Semáforo por proyecto</h2>
+  </div>
+  <div class="stack">
+    <div class="formula" aria-label="Fórmula del índice de riesgo">Índice = (Alta × 5) + (Media × 3) + (Baja × 1) = {{alta}}×5 + {{media}}×3 + {{baja}}×1 = <b>{{risk}}</b> puntos sobre {{files}} archivos</div>
+    <div class="tbl-wrap"><table id="t7"></table></div>
+    <p class="axisnote">Regla del semáforo (calculada en analyze.py): <b>Crítica</b> si hay hallazgos Alta que dan ejecución remota de código (eval, comandos, inclusión) o 10 o más Alta;
+      <b>Alta</b> si hay al menos un Alta; <b>Media</b> si solo hay Media; <b>Baja</b> en otro caso.</p>
+    <div class="grid2">
+      <div class="card stack" style="gap:12px">
+        <div class="eyebrow">Prioridades de remediación</div>
+        <ol class="prio">
+          <li><b>Parametrizar todas las consultas SQL</b> ({{sqli}} hallazgos). PDO o mysqli con <code>prepare()</code> y <code>bind_param()</code>; retirar <code>mysql_*</code>, obsoleto desde PHP 5.5.</li>
+          <li><b>Cerrar las {{rce}} rutas a ejecución remota.</b> Eliminar <code>eval()</code> ({{eval}}), sustituir <code>shell_exec()</code> por funciones nativas ({{cmd}}),
+            convertir <code>include</code> dinámico en lista blanca ({{lfi}}) y generar en el servidor el nombre de los archivos subidos ({{upload}}, reglas extra).</li>
+          <li><b>Codificar toda salida HTML</b> con <code>htmlspecialchars(…, ENT_QUOTES, 'UTF-8')</code> y desplegar una CSP. Son {{xss_v2}} XSS reflejados tras el triaje, más los reclasificados como posible XSS almacenado.</li>
+          <li><b>Sustituir MD5/SHA-1 por <code>password_hash()</code></b> ({{hash_v2}} usos sobre datos sensibles tras el triaje) y sacar los {{creds}} secretos del código a variables de entorno.</li>
+          <li><b>Reemplazar NuSOAP 0.9.5</b> (2010, sin mantenimiento) por la extensión SOAP nativa y quitar <code>phpinfo()</code> de admin. Integrar Semgrep en CI con la regla “0 hallazgos Alta”.</li>
+        </ol>
+      </div>
+      <div class="card stack" style="gap:12px">
+        <div class="eyebrow">Qué significa para un proyecto real</div>
+        <p class="prose">Con {{alta}} hallazgos Alta, un pipeline con un quality gate de “cero Alta” rechazaría cualquier pull request. El orden de las prioridades sigue
+          impacto por esfuerzo: SQLi y RCE comprometen el servidor completo y se corrigen con cambios locales y repetitivos. XSS y cripto débil exigen
+          tocar muchas vistas o migrar contraseñas almacenadas. Reemplazar NuSOAP es un cambio de arquitectura, pero reduce el riesgo de terceros.</p>
+        <p class="prose">bWAPP es vulnerable a propósito: esta postura describe el código tal cual, no un fallo del laboratorio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== REGLAS -->
+<section id="reglas">
+  <div class="sec-head">
+    <div class="eyebrow"><b>T2</b> · Ruleset <code>semgrep/php-sast-rules.yml</code></div>
+    <h2>14 reglas mapeadas a OWASP y CWE</h2>
+    <p class="prose">8 reglas taint (siguen el dato desde una fuente del usuario hasta un sink peligroso) y 6 de patrón (coincidencia sintáctica).
+      Todas tienen pruebas unitarias con casos vulnerables y corregidos: <code>semgrep --test</code> da 14/14.</p>
+  </div>
+  <div class="stack">
+    <div class="tbl-wrap"><table id="rules"></table></div>
+    <div class="stack" id="explained"></div>
+    <div class="sec-head" style="margin-top:24px">
+      <div class="eyebrow"><b>Puntos extra</b> · <code>semgrep/extra/php-extra-rules.yml</code></div>
+      <h2>Dos reglas taint nuevas, {{extra}} hallazgos no cubiertos</h2>
+      <p class="prose">Ninguna de las 14 reglas detecta <b>path traversal</b> ({{trav}}) ni <b>subida de archivos sin restricción</b> ({{upload}}), incluida la
+        webshell <code>app/backdoor.php</code>. El motor taint de Semgrep CE es intraprocedural, así que los envoltorios propios de bWAPP
+        (<code>show_file()</code>, <code>show_directory()</code>) se modelan como sinks. Pruebas: 2/2.</p>
+    </div>
+    <div class="tbl-wrap"><table id="extra"></table></div>
+    <details><summary>Ver el YAML de las reglas extra</summary><div class="in"><pre class="code plain" id="extra-yaml"></pre></div></details>
+  </div>
+</section>
+
+<!-- =================================================================== EVIDENCIA -->
+<section id="evidencia">
+  <div class="sec-head">
+    <div class="eyebrow"><b>T1 · T3 · T8</b> · Evidencia reproducible</div>
+    <h2>Entorno, comandos y salidas</h2>
+  </div>
+  <div class="stack">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Componente</th><th>Versión</th><th>Uso</th></tr></thead>
+      <tbody>
+        <tr><td>Windows 11</td><td class="mono">build 26300</td><td>Equipo del laboratorio</td></tr>
+        <tr><td>Python</td><td class="mono">3.12.10</td><td>Entorno virtual <code>.venv</code> para Semgrep, matplotlib y los scripts</td></tr>
+        <tr><td>Semgrep (pip, nativo)</td><td class="mono">{{version}}</td><td>Pruebas de reglas y escaneo de control en Windows</td></tr>
+        <tr><td>Docker + <code>semgrep/semgrep</code></td><td class="mono">29.7.2 · {{version}}</td><td>Escaneo oficial de las 3 carpetas (198 archivos)</td></tr>
+        <tr><td>Git</td><td class="mono">2.56 / 2.52</td><td>Clonado de bWAPP (Windows / contenedor)</td></tr>
+        <tr><td>bWAPP</td><td class="mono">{{commit}} ({{commit_date}})</td><td><a href="https://github.com/raesene/bWAPP" target="_blank" rel="noopener">github.com/raesene/bWAPP</a>, clon <code>--depth 1</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="card stack" style="gap:8px">
+      <div class="eyebrow">Incidencia del entorno</div>
+      <p class="prose">Al clonar, Windows Defender puso en cuarentena <code>app/php_eval.php</code> porque contiene <code>@eval($_REQUEST["eval"])</code>, una webshell.
+        No se desactivó el antivirus. El escaneo oficial se ejecutó dentro de un contenedor Linux, donde el código solo se lee como texto,
+        y un escaneo nativo de control confirmó la diferencia: <b>exactamente un hallazgo</b> (<code>php_eval.php:82</code>). La detección del antivirus es,
+        en sí misma, evidencia de la severidad del hallazgo.</p>
+    </div>
+    <details open><summary>T1 · Entorno Windows: <code>semgrep --version</code> y <code>ls bWAPP/app</code></summary><div class="in"><pre class="log" id="log-t1w"></pre></div></details>
+    <details><summary>T1 · Entorno del contenedor y clonado</summary><div class="in"><pre class="log" id="log-t1d"></pre></div></details>
+    <details><summary>T2 · Validación y pruebas unitarias de las reglas</summary><div class="in"><pre class="log" id="log-t2"></pre></div></details>
+    <details open><summary>T3 · Escaneo de las 3 carpetas (Scan Summary)</summary><div class="in"><pre class="log" id="log-t3"></pre></div></details>
+    <details><summary>T3 · Control cruzado nativo en Windows</summary><div class="in"><pre class="log" id="log-t3w"></pre></div></details>
+    <details><summary>T6 · Re-escaneo con el ruleset ajustado</summary><div class="in"><pre class="log" id="log-t6"></pre></div></details>
+    <details><summary>Extra · Reglas taint nuevas</summary><div class="in"><pre class="log" id="log-extra"></pre></div></details>
+    <div class="card stack" style="gap:10px">
+      <div class="eyebrow">Reproducir todo el laboratorio</div>
+      <pre class="code plain">powershell -ExecutionPolicy Bypass -File scripts\run_lab.ps1
+
+# o paso a paso:
+docker run --rm -v "${PWD}:/src" semgrep/semgrep:{{version}} sh /src/scripts/run_scans_docker.sh
+.venv\Scripts\python.exe semgrep\analyze.py        # summary.json, findings.csv, charts\*.png
+.venv\Scripts\python.exe reporte\build_report.py   # este reporte
+.venv\Scripts\python.exe -m http.server 8080 -d reporte   # http://localhost:8080</pre>
+    </div>
+    <div class="card stack" style="gap:10px">
+      <div class="eyebrow">Integración CI (opcional) · <code>.github/workflows/semgrep.yml</code></div>
+      <p class="prose">El flujo escanea cada push y pull request con el mismo ruleset (bWAPP llega como submódulo fijado al commit {{commit}}), sube el SARIF a la pestaña
+        <b>Security</b> (GitHub Code Scanning) y publica este dashboard en GitHub Pages. El job <i>quality gate</i> falla a propósito: bWAPP tiene hallazgos de severidad Alta,
+        y eso es lo que bloquearía un despliegue real.</p>
+      <div class="meta"><span>Repositorio: <a href="{{repo_url}}" target="_blank" rel="noopener">{{repo_url}}</a></span>
+        <span>Dashboard publicado: <a href="{{pages_url}}" target="_blank" rel="noopener">{{pages_url}}</a></span>
+        <span>Alertas: <a href="{{repo_url}}/security/code-scanning" target="_blank" rel="noopener">Security › Code scanning</a></span></div>
+      <pre class="code plain" id="ci-yaml"></pre>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Informe generado por <code>reporte/build_report.py</code> a partir de los resultados reales de Semgrep {{version}} · {{author}} · {{date}}</div></footer>
+<div id="tip" role="tooltip"></div>
+
+<script id="data" type="application/json">/*__DATA__*/null</script>
+<script>
+(function () {
+  "use strict";
+  var D = JSON.parse(document.getElementById("data").textContent);
+  var S = D.summary, SEV = ["Alta", "Media", "Baja"];
+  var PRINT = /[?&]print\b/.test(location.search);
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var escT = function (s) { return String(s == null ? "" : s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); };
+  var pill = function (s, extra) { return '<span class="pill ' + esc(s) + (extra ? " " + extra : "") + '">' + esc(s) + "</span>"; };
+  var short = function (p) { return String(p).replace(/^app\//, ""); };
+  var cweNum = function (c) { return String(c || "").split(":")[0]; };
+  var owaspShort = function (o) { return String(o || "").split(" - ")[0]; };
+  var projName = function (k) { return S.per_project[k] ? S.per_project[k].name : k; };
+
+  /* ---------------- tooltip ---------------- */
+  var tip = $("#tip");
+  document.addEventListener("mouseover", function (e) {
+    var t = e.target.closest && e.target.closest("[data-tip]");
+    if (!t) { tip.classList.remove("on"); return; }
+    tip.textContent = t.getAttribute("data-tip"); tip.classList.add("on");
+  });
+  document.addEventListener("mousemove", function (e) {
+    if (!tip.classList.contains("on")) return;
+    var x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+    tip.style.left = x + "px"; tip.style.top = (e.clientY + 16) + "px";
+  });
+
+  /* ---------------- gráficas HTML ---------------- */
+  function barList(el, rows, opt) {
+    opt = opt || {};
+    var max = Math.max.apply(null, rows.map(function (r) { return r.value; })) || 1;
+    var h = "";
+    rows.forEach(function (r) {
+      var w = (r.value / max) * 100;
+      var pct = opt.total ? '<span class="pct">' + Math.round(100 * r.value / opt.total) + " %</span>" : "";
+      h += '<div class="lab">' + esc(r.label) + (r.sub ? "<small>" + esc(r.sub) + "</small>" : "") + "</div>" +
+        '<div class="track"><div class="bar" style="width:calc(' + w.toFixed(2) + '% - 70px)" data-tip="' + esc(r.label + ": " + r.value + (opt.total ? " (" + Math.round(100 * r.value / opt.total) + " %)" : "")) + '">' +
+        '<div class="seg ' + (r.cls || "s1") + '" style="flex:1"></div></div><span class="val">' + r.value + pct + "</span></div>";
+    });
+    el.innerHTML = '<div class="bars">' + h + "</div>";
+  }
+  function stackList(el, rows) {
+    var max = Math.max.apply(null, rows.map(function (r) { return SEV.reduce(function (a, s) { return a + (r.parts[s] || 0); }, 0); })) || 1;
+    var h = "";
+    rows.forEach(function (r) {
+      var tot = SEV.reduce(function (a, s) { return a + (r.parts[s] || 0); }, 0);
+      var segs = SEV.filter(function (s) { return r.parts[s]; }).map(function (s) {
+        return '<div class="seg ' + s + '" style="flex:' + r.parts[s] + '" data-tip="' + esc(r.label + " · " + s + ": " + r.parts[s]) + '"></div>';
+      }).join("");
+      h += '<div class="lab">' + esc(r.label) + (r.sub ? "<small>" + esc(r.sub) + "</small>" : "") + "</div>" +
+        '<div class="track"><div class="bar" style="width:calc(' + ((tot / max) * 100).toFixed(2) + '% - 92px)">' + segs + "</div>" +
+        '<span class="val"><b>' + tot + '</b><span class="pct">' + SEV.map(function (s) { return r.parts[s] || 0; }).join(" · ") + "</span></span></div>";
+    });
+    el.innerHTML = '<div class="bars">' + h + '</div><div class="legend">' +
+      SEV.map(function (s) { return '<span><i style="background:var(--s-' + s.toLowerCase() + ')"></i>' + s + "</span>"; }).join("") +
+      '<span class="muted">valores: total · Alta · Media · Baja</span></div>';
+  }
+
+  var keys = ["core", "admin", "soap"];
+  stackList($("#ch-proj"), keys.map(function (k) { var p = S.per_project[k]; return { label: p.name, sub: p.files + " archivos", parts: p.by_severity }; }));
+  barList($("#ch-sev"), SEV.map(function (s) { return { label: s, value: S.totals.by_severity[s], cls: s }; }), { total: S.totals.findings });
+  barList($("#ch-owasp"), Object.keys(S.by_owasp).map(function (k) { var p = k.split(" - "); return { label: p[0], sub: p[1], value: S.by_owasp[k] }; }), { total: S.totals.findings });
+  barList($("#ch-class"), Object.keys(S.by_class).map(function (k) { return { label: k, value: S.by_class[k] }; }), { total: S.totals.findings });
+  stackList($("#ch-files"), S.top_files_core.map(function (f) { return { label: short(f.file), parts: f.by_severity }; }));
+
+  /* ---------------- proyectos: tarjetas, T3, T7 ---------------- */
+  var JUST = {
+    core: "SQLi masiva, RCE por eval y comandos, LFI, XSS y subida de archivos sin restricción.",
+    admin: "Pocos hallazgos, pero credenciales estáticas (bee/bug) en settings.php y phpinfo() expuesto.",
+    soap: "Componente de terceros NuSOAP 0.9.5 (2010): unserialize() de caché, MD5/SHA-1; requiere triaje."
+  };
+  var CMD = {
+    core: "semgrep scan --config php-sast-rules.yml --exclude admin --exclude soap --json -o out/core.json bWAPP/app",
+    admin: "semgrep scan --config php-sast-rules.yml --json -o out/admin.json bWAPP/app/admin",
+    soap: "semgrep scan --config php-sast-rules.yml --json -o out/soap.json bWAPP/app/soap"
+  };
+  $("#proj-cards").innerHTML = keys.map(function (k) {
+    var p = S.per_project[k];
+    return '<div class="card proj ' + p.posture + '"><div class="row"><div><div class="eyebrow">' + esc(p.folder) + '</div><h3>' + esc(p.name) + '</h3></div>' + pill(p.posture, "post") + '</div>' +
+      '<div class="row"><span class="n tnum">' + p.findings + ' <span class="muted" style="font-size:.9rem;font-weight:500">hallazgos</span></span><span class="muted" style="font-size:.85rem">' + p.files + " archivos · índice " + p.risk_index + "</span></div>" +
+      '<div class="bar" style="width:100%;height:10px">' + SEV.filter(function (s) { return p.by_severity[s]; }).map(function (s) { return '<div class="seg ' + s + '" style="flex:' + p.by_severity[s] + '" data-tip="' + s + ": " + p.by_severity[s] + '"></div>'; }).join("") + "</div>" +
+      "<dl><dt>Alta</dt><dd>" + p.by_severity.Alta + "</dd><dt>Media</dt><dd>" + p.by_severity.Media + "</dd><dt>Baja</dt><dd>" + p.by_severity.Baja + "</dd><dt>Rol</dt><dd>" + esc(p.role) + "</dd></dl></div>";
+  }).join("");
+
+  var t3 = "<thead><tr><th>Proyecto</th><th>Carpeta</th><th class=num>Archivos</th><th class=num>Hallazgos</th><th class=num>Alta</th><th class=num>Media</th><th class=num>Baja</th><th>Comando</th></tr></thead><tbody>";
+  keys.forEach(function (k) {
+    var p = S.per_project[k];
+    t3 += "<tr><td><b>" + esc(p.name) + "</b></td><td><code>" + esc(p.folder) + '</code></td><td class="num">' + p.files + '</td><td class="num"><b>' + p.findings + '</b></td><td class="num">' + p.by_severity.Alta + '</td><td class="num">' + p.by_severity.Media + '</td><td class="num">' + p.by_severity.Baja + '</td><td class="snip">' + esc(CMD[k]) + "</td></tr>";
+  });
+  t3 += '<tr><td><b>Total</b></td><td></td><td class="num"><b>' + S.totals.files_scanned + '</b></td><td class="num"><b>' + S.totals.findings + '</b></td><td class="num">' + S.totals.by_severity.Alta + '</td><td class="num">' + S.totals.by_severity.Media + '</td><td class="num">' + S.totals.by_severity.Baja + "</td><td class=\"snip\">JSON: semgrep/out/{core,admin,soap}.json · SARIF: *.sarif</td></tr></tbody>";
+  $("#t3").innerHTML = t3;
+
+  var t7 = "<thead><tr><th>Proyecto</th><th class=num>Hallazgos</th><th class=num>Alta</th><th class=num>Índice</th><th>Postura</th><th>Justificación</th></tr></thead><tbody>";
+  keys.forEach(function (k) {
+    var p = S.per_project[k];
+    t7 += "<tr><td><b>" + esc(p.name) + '</b></td><td class="num">' + p.findings + '</td><td class="num">' + p.by_severity.Alta + '</td><td class="num">' + p.risk_index + "</td><td>" + pill(p.posture, "post") + "</td><td>" + esc(JUST[k]) + "</td></tr>";
+  });
+  $("#t7").innerHTML = t7 + "</tbody>";
+
+  /* ---------------- código ---------------- */
+  function codeBlock(lines, hl, addRe) {
+    return '<div class="code">' + lines.map(function (l) {
+      if (l.n === null) return '<div class="ln"><span></span><span class="c">' + escT(l.t) + "</span></div>";
+      var cls = l.n === hl ? " hl" : (addRe && addRe.test(l.t) ? " add" : "");
+      return '<div class="ln' + cls + '"><span>' + l.n + "</span><span>" + escT(l.t) + "</span></div>";
+    }).join("") + "</div>";
+  }
+  function yamlBlock(text, addRe) {
+    var lines = String(text).split("\n").map(function (t, i) { return { n: i + 1, t: t }; });
+    return '<div class="code">' + lines.map(function (l) {
+      var cls = addRe && addRe.test(l.t) ? " add" : "";
+      var body = escT(l.t).replace(/(^|\s)(#.*)$/, '$1<span class="c">$2</span>').replace(/^(\s*-?\s*)([\w-]+)(:)/, '$1<span class="k">$2</span>$3');
+      return '<div class="ln' + cls + '"><span>' + l.n + "</span><span>" + body + "</span></div>";
+    }).join("") + "</div>";
+  }
+  function plainCode(text) { return '<pre class="code plain">' + esc(text) + "</pre>"; }
+
+  /* ---------------- T5 ---------------- */
+  $("#key-findings").innerHTML = D.key.map(function (k) {
+    return '<article class="card kf"><div class="kf-head"><span class="tag">' + esc(k.id) + "</span>" + pill(k.severity) + "<h3>" + esc(k.title) + '</h3><span class="tag">' + esc(owaspShort(k.owasp)) + '</span><span class="tag">' + esc(cweNum(k.cwe)) + "</span></div>" +
+      '<div class="flow" aria-label="Flujo de datos">' + k.flow.map(function (f) { return "<span>" + esc(f) + "</span>"; }).join("<b>→</b>") + "</div>" +
+      '<div class="two"><div><div class="lbl">Código vulnerable · ' + esc(k.file) + ":" + k.line + " · " + esc(projName(k.project)) + "</div>" + codeBlock(k.code, k.hl) + "<p style=\"margin-top:10px\">" + esc(k.why) + "</p></div>" +
+      '<div><div class="lbl">Remediación</div>' + plainCode(k.fixcode) + '<p style="margin-top:10px">' + esc(k.fix) + "</p></div></div></article>";
+  }).join("");
+
+  /* ---------------- explorador ---------------- */
+  var F = D.findings;
+  function opts(sel, values, labelFn) { $(sel).innerHTML = '<option value="">Todos</option>' + values.map(function (v) { return '<option value="' + esc(v) + '">' + esc(labelFn ? labelFn(v) : v) + "</option>"; }).join(""); }
+  opts("#f-proj", keys, projName);
+  opts("#f-sev", SEV);
+  opts("#f-class", Object.keys(S.by_class));
+  function renderExplorer() {
+    var fp = $("#f-proj").value, fs = $("#f-sev").value, fc = $("#f-class").value, ft = $("#f-tri").value, q = $("#f-q").value.trim().toLowerCase();
+    var rows = F.filter(function (f) {
+      if (fp && f.project !== fp) return false;
+      if (fs && f.severity !== fs) return false;
+      if (fc && f.vuln_class !== fc) return false;
+      if (ft && f.triage_v2 !== ft) return false;
+      if (q && (f.file + " " + f.snippet + " " + f.cwe + " " + f.owasp + " " + f.rule + " " + f.id).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    $("#f-count").textContent = "Mostrando " + rows.length + " de " + F.length;
+    $("#f-body").innerHTML = rows.map(function (f) {
+      return '<tr><td class="mono nowrap">' + f.id + "</td><td>" + pill(f.severity) + "</td><td>" + esc(f.vuln_class) + '</td><td class="mono" style="white-space:nowrap">' + esc(short(f.file)) + ":" + f.line +
+        '</td><td class="snip">' + esc(f.snippet) + '</td><td><span class="tag">' + esc(owaspShort(f.owasp)) + '</span> <span class="tag">' + esc(cweNum(f.cwe)) + "</span></td><td>" +
+        (f.triage_v2 === "descartado" ? '<span class="pill na">reclasif.</span>' : '<span class="pill ok">sigue</span>') + "</td></tr>";
+    }).join("");
+  }
+  ["#f-proj", "#f-sev", "#f-class", "#f-tri"].forEach(function (s) { $(s).addEventListener("change", renderExplorer); });
+  $("#f-q").addEventListener("input", renderExplorer);
+  renderExplorer();
+
+  /* ---------------- T6 ---------------- */
+  var fp1 = D.triage.filter(function (c) { return c.main; })[0];
+  $("#fp1").innerHTML = '<div class="kf-head"><span class="tag">' + esc(fp1.code) + '</span><span class="pill na">Falso positivo principal</span><h3>base64_encode() no es cifrado: cabecera HTTP Basic en NuSOAP</h3><span class="tag">' + esc(D.fp1.id) + "</span></div>" +
+    '<div class="two"><div><div class="lbl">Hallazgo · ' + esc(D.fp1.file) + ":" + D.fp1.line + " · regla php-weak-crypto (CWE-327)</div>" + codeBlock(D.fp1.code, D.fp1.line) +
+    '<p style="margin-top:10px"><b>Por qué es falso positivo.</b> ' + esc(fp1.why) + "</p>" +
+    '<p style="margin-top:8px">Aparece 4 veces (' + esc(fp1.where) + "). La regla cuenta toda llamada a base64_encode(), que solo es un problema cuando se usa para ocultar un secreto.</p></div>" +
+    '<div><div class="lbl">Ajuste de la regla (v2) · líneas nuevas resaltadas</div>' + yamlBlock(D.yaml.fp1_after, /AJUSTE|pattern-not-inside|^\s*patterns:|tuning:/) +
+    '<p style="margin-top:10px"><b>Resultado:</b> Weak Crypto pasa de ' + fp1.v1 + " a " + fp1.v2 + " hallazgo. El que queda, insecure_crypt_storage_3.php:55, es un verdadero positivo: guarda un secreto en base64 como si fuera cifrado.</p></div></div>";
+
+  var tt = "<thead><tr><th>Caso</th><th>Regla</th><th>Coincidencia marcada</th><th>Por qué no es lo que la regla dice</th><th>Ajuste</th><th class=num>v1 → v2</th></tr></thead><tbody>";
+  D.triage.forEach(function (c) {
+    var delta = c.code === "FP-6" ? '<span class="muted">supresión</span>' : c.v1 + " → " + c.v2;
+    tt += '<tr><td class="mono nowrap"><b>' + esc(c.code) + '</b></td><td class="mono">' + esc(c.rule.replace("php-", "")) + "</td><td>" + esc(c.what) + '<div class="muted" style="font-size:.78rem;margin-top:3px">' + esc(c.where) + "</div></td><td>" + esc(c.why) + '</td><td class="snip">' + esc(c.adjust) + '</td><td class="num" style="white-space:nowrap">' + delta + "</td></tr>";
+  });
+  $("#tri-table").innerHTML = tt + "</tbody>";
+
+  (function () {
+    var rows = S.triage.by_rule.filter(function (r) { return r.v1 !== r.v2; });
+    var max = Math.max.apply(null, rows.map(function (r) { return r.v1; }));
+    var h = "";
+    rows.forEach(function (r) {
+      h += '<div class="lab">' + esc(r.vuln_class) + '</div><div class="gbar">' +
+        '<div class="track"><div class="bar" style="width:calc(' + (100 * r.v1 / max).toFixed(2) + '% - 70px)" data-tip="' + esc(r.vuln_class + " · v1: " + r.v1) + '"><div class="seg s1" style="flex:1"></div></div><span class="val">' + r.v1 + "</span></div>" +
+        '<div class="track"><div class="bar" style="width:calc(' + (100 * r.v2 / max).toFixed(2) + '% - 70px)" data-tip="' + esc(r.vuln_class + " · v2: " + r.v2) + '"><div class="seg s2" style="flex:1"></div></div><span class="val">' + r.v2 + '<span class="pct">−' + (r.v1 - r.v2) + "</span></span></div></div>";
+    });
+    $("#ch-tri").innerHTML = '<div class="bars">' + h + '</div><div class="legend"><span><i style="background:var(--series-1)"></i>v1 (original)</span><span><i style="background:var(--series-2)"></i>v2 (tras triaje)</span><span class="muted">Total: ' + S.triage.v1_total + " → " + S.triage.v2_total + "</span></div>";
+  })();
+
+  $("#removed").innerHTML = "<thead><tr><th>ID</th><th>Regla</th><th>Archivo:línea</th><th>Fragmento</th></tr></thead><tbody>" +
+    S.triage.removed.map(function (f) { return '<tr><td class="mono nowrap">' + f.id + '</td><td class="mono">' + esc(f.rule.replace("php-", "")) + '</td><td class="mono" style="white-space:nowrap">' + esc(short(f.file)) + ":" + f.line + '</td><td class="snip">' + esc(f.snippet) + "</td></tr>"; }).join("") + "</tbody>";
+
+  /* ---------------- T2 y extra ---------------- */
+  $("#rules").innerHTML = "<thead><tr><th>#</th><th>ID de la regla</th><th>Modo</th><th>Severidad</th><th>OWASP 2021</th><th>CWE</th><th class=num>Hallazgos</th></tr></thead><tbody>" +
+    D.rules.map(function (r, i) { return '<tr><td class="num">' + (i + 1) + '</td><td class="mono">' + esc(r.id) + "</td><td>" + esc(r.mode) + "</td><td>" + pill(r.severity) + "</td><td>" + esc(r.owasp) + "</td><td>" + esc(r.cwe) + '</td><td class="num"><b>' + r.count + "</b></td></tr>"; }).join("") + "</tbody>";
+
+  var ex = D.yaml.explained, order = ["php-sql-injection", "php-weak-hash", "php-hardcoded-credentials"];
+  $("#explained").innerHTML = order.map(function (id) {
+    var r = D.rules.filter(function (x) { return x.id === id; })[0];
+    return '<article class="card kf"><div class="kf-head"><span class="tag">' + esc(r.mode) + "</span>" + pill(r.severity) + "<h3>" + esc(id) + '</h3><span class="tag">' + esc(owaspShort(r.owasp)) + '</span><span class="tag">' + esc(cweNum(r.cwe)) + "</span></div>" +
+      '<div class="two"><div><div class="lbl">Cómo funciona</div><p>' + esc(ex[id].text) + '</p><p style="margin-top:10px"><b>Hallazgos en bWAPP:</b> ' + r.count + "</p></div><div>" + yamlBlock(ex[id].yaml) + "</div></div></article>";
+  }).join("");
+
+  var X = S.extra.findings;
+  $("#extra").innerHTML = "<thead><tr><th>ID</th><th>Regla</th><th>Severidad</th><th>Archivo:línea</th><th>Fragmento</th><th>OWASP · CWE</th></tr></thead><tbody>" +
+    X.map(function (f) { return '<tr><td class="mono nowrap">' + f.id + "</td><td>" + esc(f.vuln_class) + "</td><td>" + pill(f.severity) + '</td><td class="mono" style="white-space:nowrap">' + esc(short(f.file)) + ":" + f.line + '</td><td class="snip">' + esc(f.snippet) + '</td><td><span class="tag">' + esc(owaspShort(f.owasp)) + '</span> <span class="tag">' + esc(cweNum(f.cwe)) + "</span></td></tr>"; }).join("") + "</tbody>";
+  $("#extra-yaml").textContent = D.yaml.extra;
+  $("#ci-yaml").textContent = D.yaml.ci || "";
+
+  /* ---------------- logs ---------------- */
+  [["t1w", "#log-t1w"], ["t1d", "#log-t1d"], ["t2", "#log-t2"], ["t3", "#log-t3"], ["t3w", "#log-t3w"], ["t6", "#log-t6"], ["extra", "#log-extra"]].forEach(function (p) {
+    var el = $(p[1]); if (el) el.textContent = D.logs[p[0]] || "(sin registro: ejecute scripts/run_lab.ps1)";
+  });
+
+  /* ---------------- navegación activa ---------------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll("nav.sec a"));
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+  }
+
+  /* ---------------- impresión ---------------- */
+  function openAll() { document.querySelectorAll("details").forEach(function (d) { d.open = true; }); }
+  window.addEventListener("beforeprint", openAll);
+  if (PRINT) openAll();
+
+  /* ?only=<id>: mostrar solo una sección (capturas de evidencia) */
+  var only = (location.search.match(/[?&]only=([\w-]+)/) || [])[1];
+  if (only) {
+    document.querySelectorAll("header.top, nav.sec, footer, main > section").forEach(function (e) {
+      if (e.id !== only) e.hidden = true;
+    });
+  }
+
+  /* enlace directo a una sección: saltar sin animación una vez dibujado el contenido */
+  if (location.hash.length > 1) {
+    var target = document.getElementById(location.hash.slice(1));
+    if (target) { var h = document.documentElement; h.style.scrollBehavior = "auto"; target.scrollIntoView(); h.style.scrollBehavior = ""; }
+  }
+})();
+</script>

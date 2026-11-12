@@ -1,0 +1,347 @@
+# =============================================================================
+#  php-sast-rules.yml — Ruleset local de Semgrep para PHP (laboratorio bWAPP)
+#  14 reglas mapeadas a OWASP Top 10 (2021) y CWE.
+#  Severidad Semgrep -> severidad del informe:
+#     ERROR = Alta | WARNING = Media | INFO = Baja
+#  Modo taint  : reglas 1-8  (source -> sink, seguimiento de datos)
+#  Modo patrón : reglas 9-14 (coincidencia sintáctica)
+# =============================================================================
+rules:
+
+  # ---------------------------------------------------------------------------
+  # 1. Inyección SQL  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-sql-injection
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Posible inyección SQL (CWE-89): una entrada del usuario llega a una
+      consulta SQL sin parametrizar.
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-89: SQL Injection"
+      vuln_class: "SQL Injection"
+      remediation: "Consultas preparadas (PDO / mysqli prepare + bind_param)."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sanitizers:
+      - pattern: intval(...)
+      - pattern: (int) $X
+    pattern-sinks:
+      - pattern: mysql_query(...)
+      - pattern: mysqli_query(...)
+      - pattern: mysqli_multi_query(...)
+      - pattern: sqlite_query(...)
+      - pattern: $O->query(...)
+      - pattern: $O->multi_query(...)
+
+  # ---------------------------------------------------------------------------
+  # 2. Inyección de comandos del SO  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-command-injection
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Posible inyección de comandos (CWE-78): una entrada del usuario llega a
+      una función que ejecuta comandos del sistema operativo.
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-78: OS Command Injection"
+      vuln_class: "Command Injection"
+      remediation: "Evitar shell_exec/exec; lista blanca + escapeshellarg()."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sanitizers:
+      - pattern: escapeshellarg(...)
+    pattern-sinks:
+      - pattern: shell_exec(...)
+      - pattern: exec(...)
+      - pattern: system(...)
+      - pattern: passthru(...)
+      - pattern: popen(...)
+      - pattern: proc_open(...)
+      - pattern: pcntl_exec(...)
+
+  # ---------------------------------------------------------------------------
+  # 3. Inyección / ejecución de código PHP (eval)  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-code-injection-eval
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Ejecución de código arbitrario (CWE-95): una entrada del usuario llega a
+      eval()/assert()/create_function(). Equivale a RCE.
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-95: Eval Injection"
+      vuln_class: "Code Injection (eval)"
+      remediation: "Eliminar eval(); no existe uso seguro con entrada externa."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sinks:
+      - pattern: eval(...)
+      - pattern: assert(...)
+      - pattern: create_function(...)
+
+  # ---------------------------------------------------------------------------
+  # 4. XSS reflejado  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-reflected-xss
+    languages: [php]
+    severity: WARNING
+    mode: taint
+    message: >-
+      Posible XSS reflejado (CWE-79): una entrada del usuario se imprime en la
+      respuesta HTML sin codificar.
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-79: Cross-site Scripting"
+      vuln_class: "Reflected XSS"
+      remediation: "Codificar la salida: htmlspecialchars($v, ENT_QUOTES, 'UTF-8')."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sanitizers:
+      - pattern: htmlspecialchars(...)
+      - pattern: htmlentities(...)
+      - pattern: intval(...)
+      - pattern: (int) $X
+    pattern-sinks:
+      - pattern: echo ...;
+      - pattern: print(...)
+      - pattern: printf(...)
+
+  # ---------------------------------------------------------------------------
+  # 5. Inclusión de archivos local/remota (LFI / RFI)  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-file-inclusion
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Posible inclusión de archivos LFI/RFI (CWE-98): una entrada del usuario
+      controla la ruta de include/require.
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-98: PHP Remote File Inclusion"
+      vuln_class: "File Inclusion (LFI/RFI)"
+      remediation: "Mapear la entrada a una lista blanca de archivos; allow_url_include=Off."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sinks:
+      - pattern: include $X;
+      - pattern: include_once $X;
+      - pattern: require $X;
+      - pattern: require_once $X;
+
+  # ---------------------------------------------------------------------------
+  # 6. Inyección LDAP  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-ldap-injection
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    message: >-
+      Posible inyección LDAP (CWE-90): una entrada del usuario se usa en un
+      filtro de búsqueda LDAP sin escapar.
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-90: LDAP Injection"
+      vuln_class: "LDAP Injection"
+      remediation: "Escapar con ldap_escape($v, '', LDAP_ESCAPE_FILTER)."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sanitizers:
+      - pattern: ldap_escape(...)
+    pattern-sinks:
+      - pattern: ldap_search(...)
+      - pattern: ldap_list(...)
+      - pattern: ldap_read(...)
+
+  # ---------------------------------------------------------------------------
+  # 7. Inyección en correo / cabeceras SMTP  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-mail-injection
+    languages: [php]
+    severity: WARNING
+    mode: taint
+    message: >-
+      Posible inyección en correo (CWE-93): una entrada del usuario llega a
+      mail() y puede inyectar cabeceras (CRLF: Bcc, Cc...).
+    metadata:
+      owasp: "A03:2021 - Injection"
+      cwe: "CWE-93: CRLF Injection"
+      vuln_class: "Mail Header Injection"
+      remediation: "Validar con filter_var(FILTER_VALIDATE_EMAIL) y rechazar \\r\\n."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sinks:
+      - pattern: mail(...)
+
+  # ---------------------------------------------------------------------------
+  # 8. Redirección abierta / división de respuesta HTTP  (taint)
+  # ---------------------------------------------------------------------------
+  - id: php-open-redirect
+    languages: [php]
+    severity: WARNING
+    mode: taint
+    message: >-
+      Posible redirección abierta (CWE-601): una entrada del usuario determina
+      el destino de header("Location: ...").
+    metadata:
+      owasp: "A01:2021 - Broken Access Control"
+      cwe: "CWE-601: Open Redirect"
+      vuln_class: "Open Redirect"
+      remediation: "Redirigir solo a destinos de una lista blanca (IDs, no URLs)."
+    pattern-sources:
+      - pattern: $_GET
+      - pattern: $_POST
+      - pattern: $_REQUEST
+      - pattern: $_COOKIE
+    pattern-sinks:
+      - pattern: header(...)
+
+  # ---------------------------------------------------------------------------
+  # 9. Hash débil (MD5 / SHA-1)  (patrón)
+  # ---------------------------------------------------------------------------
+  - id: php-weak-hash
+    languages: [php]
+    severity: WARNING
+    message: >-
+      Uso de hash débil (CWE-328): MD5/SHA-1 no son aptos para contraseñas ni
+      integridad (colisiones, fuerza bruta rápida).
+    metadata:
+      owasp: "A02:2021 - Cryptographic Failures"
+      cwe: "CWE-328: Use of Weak Hash"
+      vuln_class: "Weak Hash"
+      remediation: "password_hash()/password_verify() (bcrypt/argon2) o SHA-256+."
+    pattern-either:
+      - pattern: md5(...)
+      - pattern: sha1(...)
+      - pattern: hash("md5", ...)
+      - pattern: hash("sha1", ...)
+
+  # ---------------------------------------------------------------------------
+  # 10. Criptografía débil / codificación usada como cifrado  (patrón)
+  # ---------------------------------------------------------------------------
+  - id: php-weak-crypto
+    languages: [php]
+    severity: WARNING
+    message: >-
+      Criptografía débil (CWE-327): algoritmo obsoleto (mcrypt, DES, ECB, RC4)
+      o codificación reversible (base64) usada para proteger datos.
+    metadata:
+      owasp: "A02:2021 - Cryptographic Failures"
+      cwe: "CWE-327: Broken or Risky Crypto Algorithm"
+      vuln_class: "Weak Crypto"
+      remediation: "openssl_encrypt con AES-256-GCM o libsodium; base64 NO es cifrado."
+    pattern-either:
+      - pattern: base64_encode(...)
+      - pattern: str_rot13(...)
+      - pattern: mcrypt_encrypt(...)
+      - pattern: mcrypt_decrypt(...)
+      - pattern: openssl_encrypt($D, "=~/(?i)(ecb|des|rc4)/", ...)
+
+  # ---------------------------------------------------------------------------
+  # 11. Deserialización insegura  (patrón)
+  # ---------------------------------------------------------------------------
+  - id: php-insecure-deserialization
+    languages: [php]
+    severity: ERROR
+    message: >-
+      Deserialización insegura (CWE-502): unserialize() sobre datos no
+      constantes permite inyección de objetos PHP (POP chains).
+    metadata:
+      owasp: "A08:2021 - Software and Data Integrity Failures"
+      cwe: "CWE-502: Deserialization of Untrusted Data"
+      vuln_class: "Insecure Deserialization"
+      remediation: "Usar json_decode(); si no, unserialize($d, ['allowed_classes'=>false])."
+    patterns:
+      - pattern: unserialize($X, ...)
+      - pattern-not: unserialize("...", ...)
+      - pattern-not: unserialize($X, ["allowed_classes" => false])
+
+  # ---------------------------------------------------------------------------
+  # 12. extract() sobre datos externos  (patrón)
+  # ---------------------------------------------------------------------------
+  - id: php-extract-usage
+    languages: [php]
+    severity: WARNING
+    message: >-
+      Uso de extract() (CWE-621): puede sobrescribir variables existentes
+      (p. ej. banderas de autorización) con datos del usuario.
+    metadata:
+      owasp: "A08:2021 - Software and Data Integrity Failures"
+      cwe: "CWE-621: Variable Extraction Error"
+      vuln_class: "Variable Overwrite (extract)"
+      remediation: "Acceder a las claves esperadas explícitamente o usar EXTR_SKIP."
+    patterns:
+      - pattern: extract($X, ...)
+      - pattern-not: extract($X, EXTR_SKIP, ...)
+
+  # ---------------------------------------------------------------------------
+  # 13. Credenciales embebidas en el código  (patrón)
+  # ---------------------------------------------------------------------------
+  - id: php-hardcoded-credentials
+    languages: [php]
+    severity: WARNING
+    message: >-
+      Credencial embebida (CWE-798): contraseña o secreto escrito en el código
+      fuente.
+    metadata:
+      owasp: "A07:2021 - Identification and Authentication Failures"
+      cwe: "CWE-798: Use of Hard-coded Credentials"
+      vuln_class: "Hardcoded Credentials"
+      remediation: "Mover secretos a variables de entorno o un gestor de secretos."
+    pattern-either:
+      - patterns:
+          - pattern: $VAR = "...";
+          - pattern-not: $VAR = "";
+          - metavariable-regex:
+              metavariable: $VAR
+              regex: (?i)^\$\w*(pass|passwd|password|pwd|secret|api_?key|token)\w*$
+      - patterns:
+          - pattern: define($NAME, "...");
+          - pattern-not: define($NAME, "");
+          - metavariable-regex:
+              metavariable: $NAME
+              regex: (?i).*(pass|pwd|secret|api_?key|token).*
+
+  # ---------------------------------------------------------------------------
+  # 14. Divulgación de información con phpinfo()  (patrón)
+  # ---------------------------------------------------------------------------
+  - id: php-phpinfo-exposure
+    languages: [php]
+    severity: INFO
+    message: >-
+      Divulgación de información (CWE-200): phpinfo() expone versión de PHP,
+      módulos, rutas y variables de entorno.
+    metadata:
+      owasp: "A05:2021 - Security Misconfiguration"
+      cwe: "CWE-200: Exposure of Sensitive Information"
+      vuln_class: "Information Disclosure (phpinfo)"
+      remediation: "Eliminar páginas phpinfo() de producción."
+    pattern: phpinfo(...)
